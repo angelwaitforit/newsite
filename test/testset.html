@@ -1,0 +1,1606 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Auctora Consulting</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,100..900&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Inter', sans-serif;
+      font-weight: 300;
+    }
+    h1, h2, h3, h4, h5, h6 {
+        font-weight: 400;
+    }
+    .page-content {
+      display: none;
+      opacity: 0;
+      transition: opacity 0.5s ease-in-out;
+    }
+    .page-content.active {
+      display: block;
+      opacity: 1;
+    }
+    .tab-btn.active {
+      background-color: #3b82f6;
+      color: white;
+    }
+    #mobile-menu-items {
+      transition: transform 0.3s ease-in-out;
+      transform: translateX(100%);
+      width: 100%;
+      height: 100%;
+      position: fixed;
+      top: 0;
+      right: 0;
+      z-index: 50;
+      background-color: rgba(255, 255, 255, 0.9);
+      backdrop-filter: blur(5px);
+    }
+    #mobile-menu-items.open {
+      transform: translateX(0);
+    }
+    .backdrop-filter {
+      backdrop-filter: blur(5px);
+    }
+    .modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: rgba(0, 0, 0, 0.5);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 100;
+      opacity: 0;
+      transition: opacity 0.3s ease-in-out;
+      pointer-events: none;
+    }
+    .modal-overlay.open {
+      opacity: 1;
+      pointer-events: auto;
+    }
+    .modal-content {
+      background-color: #fff;
+      padding: 2rem;
+      border-radius: 1.5rem;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+      width: 90%;
+      max-width: 500px;
+      position: relative;
+      transform: translateY(-50px);
+      transition: transform 0.3s ease-in-out;
+    }
+    .modal-overlay.open .modal-content {
+      transform: translateY(0);
+    }
+    .close-button {
+      position: absolute;
+      top: 1rem;
+      right: 1rem;
+      font-size: 1.5rem;
+      cursor: pointer;
+      color: #9ca3af;
+      transition: color 0.2s;
+    }
+    .close-button:hover {
+      color: #1f2937;
+    }
+    .quiz-answer {
+      cursor: pointer;
+      border: 2px solid #e5e7eb;
+      transition: all 0.2s;
+    }
+    .quiz-answer.selected {
+      border-color: #3b82f6;
+      background-color: #eff6ff;
+    }
+  </style>
+</head>
+<body class="bg-gray-50 text-gray-800">
+
+  <!-- Pop-up Modal for Guidebook -->
+  <div id="guidebook-modal-overlay" class="modal-overlay">
+    <div id="guidebook-modal" class="modal-content text-center">
+      <button class="close-button" id="close-guidebook-modal">&times;</button>
+      <h3 class="text-2xl font-normal text-gray-800 mb-2">Unlock Your Growth: Claim Your Digital Marketing Blueprint!</h3>
+      <p class="text-gray-600 mb-6">Enter your email to get instant access to our exclusive guide, packed with industry-tested frameworks to transform your business's online presence. Stop guessing and start growing!</p>
+      <form id="guidebook-form" class="flex flex-col gap-4">
+        <input type="email" id="guidebook-email" placeholder="Enter your email address" required
+          class="w-full p-3 rounded-full border border-gray-300 focus:outline-none focus:border-blue-500 transition-colors">
+        <button type="submit" class="bg-blue-600 text-white font-semibold py-3 px-6 rounded-full hover:bg-blue-700 transition-colors duration-300">
+          Get Your Blueprint Now!
+        </button>
+      </form>
+      <div id="guidebook-message-box" class="mt-4 hidden">
+        <p class="text-green-600">Thank you! Your guide is on its way.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Header Section -->
+  <header class="bg-white sticky top-0 z-50 shadow-md">
+    <div class="container mx-auto px-6 py-4 flex justify-between items-center">
+      <a href="#" class="text-2xl font-normal text-gray-900 nav-link" data-page="home-page">Auctora Consulting</a>
+      <div class="md:hidden flex items-center">
+        <button id="menu-toggle" class="text-gray-600 text-3xl hover:text-gray-900 focus:outline-none ml-auto">
+          &#9776;
+        </button>
+      </div>
+      <nav id="nav-menu" class="hidden md:flex space-x-6 items-center">
+        <a href="#about" class="text-gray-600 hover:text-blue-600 transition-colors nav-link" data-page="home-page">About</a>
+        <a href="#services" class="text-gray-600 hover:text-blue-600 transition-colors nav-link" data-page="services-page">Services</a>
+        <a href="#partners" class="text-gray-600 hover:text-blue-600 transition-colors nav-link" data-page="home-page">Partners</a>
+        <a href="#blog" class="text-gray-600 hover:text-blue-600 transition-colors nav-link" data-page="blog-page">Blog</a>
+        <a href="#contact" class="text-gray-600 hover:text-blue-600 transition-colors nav-link" data-page="home-page">Contact</a>
+        <a href="#ai-strategist" class="text-gray-600 hover:text-blue-600 transition-colors nav-link" data-page="home-page">AI Strategist</a>
+        <a href="#privacy" class="text-gray-600 hover:text-blue-600 transition-colors nav-link" data-page="privacy-page">Privacy Policy</a>
+        <a href="#terms" class="text-gray-600 hover:text-blue-600 transition-colors nav-link" data-page="terms-page">Terms & Conditions</a>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Mobile Menu -->
+  <nav id="mobile-menu-items" class="md:hidden fixed top-0 right-0 h-full w-64 bg-white shadow-xl px-6 py-4 z-40">
+    <button id="mobile-menu-close" class="absolute top-4 right-4 text-gray-600 text-3xl">&times;</button>
+    <div class="flex flex-col space-y-4 text-center mt-20">
+      <a href="#about" class="py-2 text-gray-700 hover:text-blue-600 nav-link" data-page="home-page">About</a>
+      <a href="#services" class="py-2 text-gray-700 hover:text-blue-600 nav-link" data-page="services-page">Services</a>
+      <a href="#partners" class="py-2 text-gray-700 hover:text-blue-600 nav-link" data-page="home-page">Partners</a>
+      <a href="#blog" class="py-2 text-gray-700 hover:text-blue-600 nav-link" data-page="blog-page">Blog</a>
+      <a href="#contact" class="py-2 text-gray-700 hover:text-blue-600 nav-link" data-page="home-page">Contact</a>
+      <a href="#ai-strategist" class="py-2 text-gray-700 hover:text-blue-600 nav-link" data-page="home-page">AI Strategist</a>
+      <a href="#privacy" class="py-2 text-gray-700 hover:text-blue-600 nav-link" data-page="privacy-page">Privacy Policy</a>
+      <a href="#terms" class="py-2 text-gray-700 hover:text-blue-600 nav-link" data-page="terms-page">Terms & Conditions</a>
+    </div>
+  </nav>
+
+  <!-- Main content sections -->
+  <div id="home-page" class="page-content active">
+    <!-- Hero Section -->
+    <section class="bg-blue-50 py-24 text-center rounded-b-3xl shadow-inner">
+      <div class="container mx-auto px-6">
+        <h1 class="text-4xl md:text-5xl font-normal text-gray-900 mb-4 leading-tight">
+          Right-Sized Digital Solutions For Growing Businesses
+        </h1>
+        <p class="text-lg font-light text-gray-600 max-w-2xl mx-auto mb-8">
+          Custom branding, websites, NFC & event tech, digital marketing, automation, and dedicated support—designed for your growth stage.
+        </p>
+        <a href="#consultation" class="bg-blue-600 text-white font-semibold py-3 px-8 rounded-full shadow-lg hover:bg-blue-700 transition-colors duration-300 consultation-link" data-page="consultation-page">Get My Free Strategy Analysis</a>
+      </div>
+    </section>
+
+    <!-- About Section -->
+    <section id="about" class="container mx-auto px-6 py-16">
+      <h2 class="text-3xl font-normal text-gray-800 text-center mb-8">About Auctora</h2>
+      <p class="text-center text-lg text-gray-600 max-w-3xl mx-auto">
+        Auctora Consulting is a dedicated digital consultancy. We blend sweat-equity branding, streamlined web builds, NFC & event tech, targeted marketing, smart automation, and flexible support teams to deliver just what your business needs—nothing more, nothing less.
+      </p>
+    </section>
+    
+    <!-- Services Cards (now on the home page) -->
+    <section id="services-preview" class="bg-white rounded-3xl shadow-xl py-16">
+      <div class="container mx-auto px-6">
+        <h2 class="text-3xl font-normal text-gray-800 text-center mb-8">What We Offer</h2>
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+          <div class="bg-gray-50 p-6 rounded-2xl shadow-md hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1">
+            <div class="text-4xl mb-4 text-blue-600">🎨</div>
+            <h3 class="font-normal text-xl mb-2">Branding & Design</h3>
+            <p class="text-gray-600">Logos, collateral, event assets, and merchandise designs to build a memorable identity.</p>
+          </div>
+          <div class="bg-gray-50 p-6 rounded-2xl shadow-md hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1">
+            <div class="text-4xl mb-4 text-blue-600">💻</div>
+            <h3 class="font-normal text-xl mb-2">Web & E-Commerce</h3>
+            <p class="text-gray-600">From one-page launches to full online stores, booking, or custom integrations.</p>
+          </div>
+          <div class="bg-gray-50 p-6 rounded-2xl shadow-md hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1">
+            <div class="text-4xl mb-4 text-blue-600">📳</div>
+            <h3 class="font-normal text-xl mb-2">NFC & Event Tech</h3>
+            <p class="text-gray-600">Tap-to-share cards, badge check-in, interactive displays, and on-site AV support.</p>
+          </div>
+          <div class="bg-gray-50 p-6 rounded-2xl shadow-md hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1">
+            <div class="text-4xl mb-4 text-blue-600">📈</div>
+            <h3 class="font-normal text-xl mb-2">Digital Marketing</h3>
+            <p class="text-gray-600">SEO, social media, email campaigns, paid ads, and influencer partnerships.</p>
+          </div>
+          <div class="bg-gray-50 p-6 rounded-2xl shadow-md hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1">
+            <div class="text-4xl mb-4 text-blue-600">🤖</div>
+            <h3 class="font-normal text-xl mb-2">Automation</h3>
+            <p class="text-gray-600">CRM integrations, automated workflows, dashboards, and smart notifications.</p>
+          </div>
+          <div class="bg-gray-50 p-6 rounded-2xl shadow-md hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1">
+            <div class="text-4xl mb-4 text-blue-600">🛠️</div>
+            <h3 class="font-normal text-xl mb-2">IT & AV Support</h3>
+            <p class="text-gray-600">Domain/email setup, on-site AV, vendor coordination, and technology consulting.</p>
+          </div>
+          <div class="bg-gray-50 p-6 rounded-2xl shadow-md hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1">
+            <div class="text-4xl mb-4 text-blue-600">🧠</div>
+            <h3 class="font-normal text-xl mb-2">AI Agents</h3>
+            <p class="text-gray-600">Automated AI-driven agents for content, customer service, or workflow support.</p>
+          </div>
+          <div class="bg-gray-50 p-6 rounded-2xl shadow-md hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1">
+            <div class="text-4xl mb-4 text-blue-600">🖨️</div>
+            <h3 class="font-normal text-xl mb-2">3D Printing Services</h3>
+            <p class="text-gray-600">Custom 3D modeling, prototyping, and physical branding solutions.</p>
+          </div>
+          <div class="bg-gray-50 p-6 rounded-2xl shadow-md hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1">
+            <div class="text-4xl mb-4 text-blue-600">🎥</div>
+            <h3 class="font-normal text-xl mb-2">Video Production & Live Streaming</h3>
+            <p class="text-gray-600">Promo videos, live streams, highlight reels, and event documentation.</p>
+          </div>
+          <div class="bg-gray-50 p-6 rounded-2xl shadow-md hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1">
+            <div class="text-4xl mb-4 text-blue-600">📦</div>
+            <h3 class="font-normal text-xl mb-2">Project Management & Logistics</h3>
+            <p class="text-gray-600">End-to-end coordination, timelines, vendor logistics, and on-site execution.</p>
+          </div>
+          <div class="bg-gray-50 p-6 rounded-2xl shadow-md hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1">
+            <div class="text-4xl mb-4 text-blue-600">✍️</div>
+            <h3 class="font-normal text-xl mb-2">Content Strategy & Copywriting</h3>
+            <p class="text-gray-600">Web copy, blogs, email, and social content strategy and execution.</p>
+          </div>
+          <div class="bg-gray-50 p-6 rounded-2xl shadow-md hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1">
+            <div class="text-4xl mb-4 text-blue-600">🤝</div>
+            <h3 class="font-normal text-xl mb-2">Strategic Vendor Collaboration</h3>
+            <p class="text-gray-600">Partnering with specialized teams for cultural, artistic, or geographical alignment.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Partners Section -->
+    <section id="partners" class="container mx-auto px-6 py-16">
+      <h2 class="text-3xl font-normal text-gray-800 text-center mb-4">Our Collaborative Network</h2>
+      <p class="text-center text-lg text-gray-600 max-w-3xl mx-auto mb-8">
+        We act as your creative director, meticulously curating a "beehive" of best-in-class partners to bring your vision to life.
+      </p>
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-8 justify-items-center items-center py-8">
+        <img src="https://placehold.co/150x50/e2e8f0/64748b?text=Partner+1" alt="Partner Logo 1" class="w-full h-auto max-w-[150px] transition-transform duration-300 hover:scale-105">
+        <img src="https://placehold.co/150x50/e2e8f0/64748b?text=Partner+2" alt="Partner Logo 2" class="w-full h-auto max-w-[150px] transition-transform duration-300 hover:scale-105">
+        <img src="https://placehold.co/150x50/e2e8f0/64748b?text=Partner+3" alt="Partner Logo 3" class="w-full h-auto max-w-[150px] transition-transform duration-300 hover:scale-105">
+        <img src="https://placehold.co/150x50/e2e8f0/64748b?text=Partner+4" alt="Partner Logo 4" class="w-full h-auto max-w-[150px] transition-transform duration-300 hover:scale-105">
+        <img src="https://placehold.co/150x50/e2e8f0/64748b?text=Partner+5" alt="Partner Logo 5" class="w-full h-auto max-w-[150px] transition-transform duration-300 hover:scale-105">
+        <img src="https://placehold.co/150x50/e2e8f0/64748b?text=Partner+6" alt="Partner Logo 6" class="w-full h-auto max-w-[150px] transition-transform duration-300 hover:scale-105">
+        <img src="https://placehold.co/150x50/e2e8f0/64748b?text=Partner+7" alt="Partner Logo 7" class="w-full h-auto max-w-[150px] transition-transform duration-300 hover:scale-105">
+        <img src="https://placehold.co/150x50/e2e8f0/64748b?text=Partner+8" alt="Partner Logo 8" class="w-full h-auto max-w-[150px] transition-transform duration-300 hover:scale-105">
+      </div>
+      <div class="text-center mt-12">
+        <h3 class="text-2xl font-normal text-gray-800 mb-4">Are you a creative expert?</h3>
+        <p class="text-lg text-gray-600 max-w-2xl mx-auto mb-6">
+          We're always looking for new partners to join our collaborative network. Let's build something great together.
+        </p>
+        <a href="#contact" class="bg-blue-600 text-white font-semibold py-3 px-8 rounded-full shadow-lg hover:bg-blue-700 transition-colors duration-300 nav-link" data-page="home-page">
+          Join the Network
+        </a>
+      </div>
+    </section>
+
+    <!-- AI Strategist Section -->
+    <section id="ai-strategist" class="container mx-auto px-6 py-16">
+      <div class="bg-white rounded-3xl shadow-xl p-8 md:p-16 text-center">
+        <h2 class="text-3xl md:text-4xl font-normal text-gray-800 mb-4">Strategic AI Blueprint</h2>
+        <p class="text-lg text-gray-600 mb-8 max-w-2xl mx-auto">
+          Need a quick solution? Our AI Strategist can provide an initial plan based on your needs.
+        </p>
+        <form id="ai-form" class="flex flex-col items-center w-full max-w-2xl mx-auto gap-4">
+          <textarea id="ai-input" placeholder="Describe your business and your goals (e.g., 'We are a small bakery that wants to increase online orders')."
+            class="w-full p-4 rounded-2xl border-2 border-gray-300 bg-gray-50 text-gray-800 focus:outline-none focus:border-blue-500 transition-colors" rows="5"></textarea>
+          <button type="submit"
+            class="w-full md:w-auto bg-blue-600 hover:bg-blue-700 text-white font-semibold py-4 px-8 rounded-full transition duration-300 transform hover:scale-105">
+            Get My Strategy
+          </button>
+        </form>
+        <div id="ai-output" class="mt-8 text-left bg-gray-100 p-6 rounded-2xl shadow-inner hidden">
+          <h3 class="text-xl font-normal text-gray-800 mb-2">Your Custom Strategy</h3>
+          <p class="text-gray-700 leading-relaxed" id="ai-text"></p>
+        </div>
+        <div id="loading-spinner" class="mt-8 hidden">
+          <div class="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-blue-500"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-gray-800 text-white py-8 px-6 text-center rounded-t-3xl mt-16">
+      <div class="container mx-auto">
+        <div class="flex flex-col md:flex-row justify-center items-center gap-4 mb-4">
+            <a href="#privacy" class="text-gray-400 hover:text-white transition-colors nav-link" data-page="privacy-page">Privacy Policy</a>
+            <span class="text-gray-600 hidden md:block">|</span>
+            <a href="#terms" class="text-gray-400 hover:text-white transition-colors nav-link" data-page="terms-page">Terms & Conditions</a>
+        </div>
+        <p class="mb-2">&copy; 2025 Auctora Consulting. All rights reserved.</p>
+      </div>
+    </footer>
+  </div>
+
+  <!-- Services Page -->
+  <div id="services-page" class="page-content py-16 px-6 container mx-auto">
+    <button class="bg-blue-600 text-white font-semibold py-2 px-6 rounded-full hover:bg-blue-700 transition-colors mb-8 nav-link" data-page="home-page">
+      ← Back to Home
+    </button>
+    <h1 class="text-4xl font-normal text-gray-900 text-center mb-4">Our Services</h1>
+    
+    <!-- Intro to Services Section -->
+    <div class="bg-white rounded-3xl shadow-xl p-8 md:p-16 text-center">
+        <h2 class="text-3xl font-normal text-gray-800 mb-4">Find the Right-Sized Solution for Your Business</h2>
+        <p class="text-lg text-gray-600 max-w-2xl mx-auto mb-8">
+          Our service tiers are designed to match your business at every stage. Explore our packages below to find the perfect solution for your current needs, whether you're just starting, scaling, or aiming for market leadership.
+        </p>
+        <div class="flex justify-center mb-8">
+            <img src="https://placehold.co/600x400/94A3B8/FFFFFF?text=Digital+Strategy+Chart" alt="A visual representation of digital strategy and business growth." class="w-full max-w-lg rounded-2xl shadow-lg">
+        </div>
+    </div>
+
+    <!-- Segment tabs -->
+    <div class="flex justify-center flex-wrap gap-4 mt-16 mb-8">
+      <button class="tab-btn py-2 px-6 rounded-full border border-blue-600 text-blue-600 font-medium bg-blue-600 text-white transition-colors" data-segment="service">Service Businesses</button>
+      <button class="tab-btn py-2 px-6 rounded-full border border-blue-600 text-blue-600 font-medium hover:bg-blue-600 hover:text-white transition-colors" data-segment="vendor">Vendors</button>
+      <button class="tab-btn py-2 px-6 rounded-full border border-blue-600 text-blue-600 font-medium hover:bg-blue-600 hover:text-white transition-colors" data-segment="event">Event Companies</button>
+    </div>
+
+    <!-- Service Business Matrix -->
+    <div id="service" class="matrix overflow-x-auto shadow-lg rounded-2xl">
+      <table class="w-full text-left bg-white">
+        <thead class="bg-gray-100">
+          <tr>
+            <th class="p-4 font-normal rounded-tl-2xl">Service Area</th>
+            <th class="p-4 font-normal">Starter<br><span class="text-blue-600 text-sm">Just getting started?</span></th>
+            <th class="p-4 font-normal">Growth<br><span class="text-blue-600 text-sm">Ready to scale up?</span></th>
+            <th class="p-4 font-normal rounded-tr-2xl">Dominance<br><span class="text-blue-600 text-sm">Going all in?</span></th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="p-4 border-t border-gray-200">Branding & Design</td>
+            <td class="p-4 border-t border-gray-200">Logo + Identity<br><b class="text-blue-600">$500+</b><br><span class="text-xs text-gray-500">Best for startups</span></td>
+            <td class="p-4 border-t border-gray-200">Brand kit + cards<br><b class="text-blue-600">$1,250+</b><br><span class="text-xs text-gray-500">Most Popular</span></td>
+            <td class="p-4 border-t border-gray-200">Full brand, merch<br><b class="text-blue-600">$2,500–$4,000+</b><br><span class="text-xs text-gray-500">Custom Quote</span></td>
+          </tr>
+          <tr>
+            <td class="p-4 border-t border-gray-200">Web Presence</td>
+            <td class="p-4 border-t border-gray-200">1-page site + SEO<br><b class="text-blue-600">$600+</b><br><span class="text-xs text-gray-500">Launch a professional online presence quickly.</span></td>
+            <td class="p-4 border-t border-gray-200">5–10 page site + content<br><b class="text-blue-600">$1,250+</b><br><span class="text-xs text-gray-500">Expand your digital footprint with rich content.</span></td>
+            <td class="p-4 border-t border-gray-200">Custom site, booking/shop<br><b class="text-blue-600">$2,500–$6,000+</b><br><span class="text-xs text-gray-500">Custom-built site with advanced features.</span></td>
+          </tr>
+          <tr>
+            <td class="p-4 border-t border-gray-200">Digital Marketing</td>
+            <td class="p-4 border-t border-gray-200">Local SEO<br><b class="text-blue-600">$400/mo</b><br><span class="text-xs text-gray-500">Improve local search visibility and foot traffic.</span></td>
+            <td class="p-4 border-t border-gray-200">Social/email setup<br><b class="text-blue-600">$700/mo</b><br><span class="text-xs text-gray-500">Engage customers with targeted social and email campaigns.</span></td>
+            <td class="p-4 border-t border-gray-200">Ongoing SEO & Ads<br><b class="text-blue-600">$1,200–$2,000/mo</b><br><span class="text-xs text-gray-500">Drive sales with sustained SEO and ad management.</span></td>
+          </tr>
+          <tr>
+            <td class="p-4 border-t border-gray-200">Automation</td>
+            <td class="p-4 border-t border-gray-200">Contact form/email<br><b class="text-blue-600">$400+</b><br><span class="text-xs text-gray-500">Automate basic lead capture and follow-up.</span></td>
+            <td class="p-4 border-t border-gray-200">CRM integration<br><b class="text-blue-600">$750+</b><br><span class="text-xs text-gray-500">Streamline customer relationship management.</span></td>
+            <td class="p-4 border-t border-gray-200">Custom workflows<br><b class="text-blue-600">$1,500+ est.</b><br><span class="text-xs text-gray-500">Build custom, end-to-end operational automation.</span></td>
+          </tr>
+          <tr>
+            <td class="p-4 border-t border-gray-200">IT & AV Support</td>
+            <td class="p-4 border-t border-gray-200">Domain/email setup<br><b class="text-blue-600">$200+</b><br><span class="text-xs text-gray-500">Essential technical setup to get your business online.</span></td>
+            <td class="p-4 border-t border-gray-200">Basic consulting<br><b class="text-blue-600">$400/day</b><br><span class="text-xs text-gray-500">Get expert advice on your technology stack.</span></td>
+            <td class="p-4 border-t border-gray-200">On-site tech support<br><b class="text-blue-600">$500+/day</b><br><span class="text-xs text-gray-500">Dedicated on-site support for your events or office.</span></td>
+          </tr>
+          <tr>
+            <td class="p-4 border-t border-gray-200">Project Mgmt & Logistics</td>
+            <td class="p-4 border-t border-gray-200">Coordination basics<br><b class="text-blue-600">$300+</b><br><span class="text-xs text-gray-500">Ensure projects start on the right foot.</span></td>
+            <td class="p-4 border-t border-gray-200">Timeline & vendors<br><b class="text-blue-600">$800+</b><br><span class="text-xs text-gray-500">Keep projects on schedule with vendor management.</span></td>
+            <td class="p-4 border-t border-gray-200">Full execution<br><b class="text-blue-600">$2,000–$4,000+</b><br><span class="text-xs text-gray-500">End-to-end management for complex projects.</span></td>
+          </tr>
+          <tr>
+            <td class="p-4 border-t border-gray-200">Video & Streaming</td>
+            <td class="p-4 border-t border-gray-200">Promo clip<br><b class="text-blue-600">$400+</b><br><span class="text-xs text-gray-500">Create a quick video to highlight your business.</span></td>
+            <td class="p-4 border-t border-gray-200">Live stream + clips<br><b class="text-blue-600">$950+</b><br><span class="text-xs text-gray-500">Stream events and get reusable content.</span></td>
+            <td class="p-4 border-t border-gray-200">Multi-cam package<br><b class="text-blue-600">$2,000–$5,000+</b><br><span class="text-xs text-gray-500">Professional, multi-camera live video production.</span></td>
+          </tr>
+          <tr>
+            <td class="p-4 border-t border-gray-200">Content & Copywriting</td>
+            <td class="p-4 border-t border-gray-200">Landing page copy<br><b class="text-blue-600">$200+</b><br><span class="text-xs text-gray-500">Write compelling copy that converts visitors.</span></td>
+            <td class="p-4 border-t border-gray-200">Site content + posts<br><b class="text-blue-600">$500+</b><br><span class="text-xs text-gray-500">Populate your website and social with engaging content.</span></td>
+            <td class="p-4 border-t border-gray-200">Strategy & campaigns<br><b class="text-blue-600">$1,200/mo est.</b><br><span class="text-xs text-gray-500">Manage ongoing content and email marketing campaigns.</span></td>
+          </tr>
+          <tr>
+            <td class="p-4 border-t border-gray-200">Customer Service & Sales Agents</td>
+            <td class="p-4 border-t border-gray-200">Chat/email support<br><b class="text-blue-600">$250/mo</b><br><span class="text-xs text-gray-500">Provide basic support to answer customer questions.</span></td>
+            <td class="p-4 border-t border-gray-200">Phone/chat + rep<br><b class="text-blue-600">$600/mo</b><br><span class="text-xs text-gray-500">Give customers direct phone access to a sales rep.</span></td>
+            <td class="p-4 border-t border-gray-200">24/7 support & agents<br><b class="text-blue-600">$1,200–$2,000/mo</b><br><span class="text-xs text-gray-500">Scale your support and sales team with dedicated agents.</span></td>
+          </tr>
+          <tr>
+            <td class="p-4 border-t border-gray-200">Strategic Vendor Collaboration</td>
+            <td class="p-4 border-t border-gray-200">Discovery<b class="text-blue-600">$350+</b><br><span class="text-xs text-gray-500">Identify niche vendors for your business.</span></td>
+            <td class="p-4 border-t border-gray-200">Collaboration<b class="text-blue-600">$750+</b><br><span class="text-xs text-gray-500">Managed projects with a trusted partner.</span></td>
+            <td class="p-4 border-t border-gray-200">Full Alignment<b class="text-blue-600">$1,500–$3,000+</b><br><span class="text-xs text-gray-500">End-to-end management of culturally-aligned projects.</span></td>
+          </tr>
+          <tr>
+            <td colspan="4" class="p-4 bg-gray-100 text-gray-600 rounded-b-2xl">
+              <span class="font-normal text-gray-800">Note:</span> Prices are for typical project sizes and can vary based on your needs. All packages can be tailored. <a href="#contact" class="text-blue-600 underline nav-link" data-page="home-page">Book a free custom quote</a>.
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Vendor Matrix -->
+    <div id="vendor" class="matrix overflow-x-auto shadow-lg rounded-2xl hidden">
+      <table class="w-full text-left bg-white">
+        <thead class="bg-gray-100">
+          <tr>
+            <th class="p-4 font-normal rounded-tl-2xl">Service Area</th>
+            <th class="p-4 font-normal">Launch<br><span class="text-blue-600 text-sm">($500+)</span></th>
+            <th class="p-4 font-normal">Growth Commerce<br><span class="text-blue-600 text-sm">($1,750+)</span></th>
+            <th class="p-4 font-normal rounded-tr-2xl">Vendor Elite<br><span class="text-blue-600 text-sm">($3,000–$6,000+)</span></th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="p-4 border-t border-gray-200">Branding & Design</td>
+            <td class="p-4 border-t border-gray-200">Logo & brochure<br><b class="text-blue-600">$500+</b><br><span class="text-xs text-gray-500">Basic brand kit for market entry.</span></td>
+            <td class="p-4 border-t border-gray-200">Brand kit & labels<b class="text-blue-600">$1,100+</b><br><span class="text-xs text-gray-500">Differentiated branding for growth.</span></td>
+            <td class="p-4 border-t border-gray-200">Merch & packaging<b class="text-blue-600">$2,500–$4,000+</b><br><span class="text-xs text-gray-500">Complete, professional brand execution.</span></td>
+          </tr>
+          <tr>
+            <td class="p-4 border-t border-gray-200">Online Store</td>
+            <td class="p-4 border-t border-gray-200">Shopify setup<b class="text-blue-600">$600+</b><br><span class="text-xs text-gray-500">Quick e-commerce launch.</span></td>
+            <td class="p-4 border-t border-gray-200">50 products + training<b class="text-blue-600">$1,750+</b><br><span class="text-xs text-gray-500">Comprehensive product listing and training.</span></td>
+            <td class="p-4 border-t border-gray-200">Multi-channel e-com<b class="text-blue-600">$3,000–$6,000+</b><br><span class="text-xs text-gray-500">Sell across multiple online platforms.</span></td>
+          </tr>
+          <tr>
+            <td class="p-4 border-t border-gray-200">NFC & Event Tech</td>
+            <td class="p-4 border-t border-gray-200">2 cards<b class="text-blue-600">$100+</b><br><span class="text-xs text-gray-500">Simple business cards with NFC tags.</span></td>
+            <td class="p-4 border-t border-gray-200">Keychains + analytics<b class="text-blue-600">$350+</b><br><span class="text-xs text-gray-500">Track engagement with branded keychains.</span></td>
+            <td class="p-4 border-t border-gray-200">Interactive tags<b class="text-blue-600">$900+</b><br><span class="text-xs text-gray-500">Advanced NFC tags for customer interaction.</span></td>
+          </tr>
+          <tr>
+            <td class="p-4 border-t border-gray-200">Digital Marketing</td>
+            <td class="p-4 border-t border-gray-200">SEO basics<b class="text-blue-600">$400/mo</b><br><span class="text-xs text-gray-500">Foundational SEO for vendors.</span></td>
+            <td class="p-4 border-t border-gray-200">Ads & integration<b class="text-blue-600">$900/mo</b><br><span class="text-xs text-gray-500">Integrated ad campaigns for increased reach.</span></td>
+            <td class="p-4 border-t border-gray-200">Full retainer<b class="text-blue-600">$1,400–$2,500/mo</b><br><span class="text-xs text-gray-500">Comprehensive marketing management.</span></td>
+          </tr>
+          <tr>
+            <td class="p-4 border-t border-gray-200">Automation</td>
+            <td class="p-4 border-t border-gray-200">Inventory sync<b class="text-blue-600">$400+</b><br><span class="text-xs text-gray-500">Automated inventory tracking across platforms.</span></td>
+            <td class="p-4 border-t border-gray-200">CRM/order automations<b class="text-blue-600">$850+</b><br><span class="text-xs text-gray-500">Automate customer communication and order flows.</span></td>
+            <td class="p-4 border-t border-gray-200">Custom pipelines<b class="text-blue-600">$2,000+ est.</b><br><span class="text-xs text-gray-500">Build custom automated sales and fulfillment.</span></td>
+          </tr>
+          <tr>
+            <td class="p-4 border-t border-gray-200">IT & AV Support</td>
+            <td class="p-4 border-t border-gray-200">Platform help<b class="text-blue-600">$200+</b><br><span class="text-xs text-gray-500">Technical assistance for online sales platforms.</span></td>
+            <td class="p-4 border-t border-gray-200">POS consulting<b class="text-blue-600">$400+/day</b><br><span class="text-xs text-gray-500">Expert advice on point-of-sale systems.</span></td>
+            <td class="p-4 border-t border-gray-200">Event support<b class="text-blue-600">$600+/day</b><br><span class="text-xs text-gray-500">On-site technical support for your events.</span></td>
+          </tr>
+          <tr>
+            <td class="p-4 border-t border-gray-200">Project Management</td>
+            <td class="p-4 border-t border-gray-200">Overview<b class="text-blue-600">$250+</b><br><span class="text-xs text-gray-500">Basic coordination to get your project started.</span></td>
+            <td class="p-4 border-t border-gray-200">Scheduling & logistics<b class="text-blue-600">$800+</b><br><span class="text-xs text-gray-500">Manage timelines and vendor communication.</span></td>
+            <td class="p-4 border-t border-gray-200">Full execution<b class="text-blue-600">$2,000–$5,000+</b><br><span class="text-xs text-gray-500">End-to-end management for complex vendor projects.</span></td>
+          </tr>
+          <tr>
+            <td class="p-4 border-t border-gray-200">Video & Streaming</td>
+            <td class="p-4 border-t border-gray-200">Demo video<b class="text-blue-600">$400+</b><br><span class="text-xs text-gray-500">Create a quick video to showcase your products.</span></td>
+            <td class="p-4 border-t border-gray-200">Stream + clips<b class="text-blue-600">$950+</b><br><span class="text-xs text-gray-500">Live stream events and get reusable video clips.</span></td>
+            <td class="p-4 border-t border-gray-200">Full production<b class="text-blue-600">$2,500–$6,000+</b><br><span class="text-xs text-gray-500">High-end video and live streaming production.</span></td>
+          </tr>
+          <tr>
+            <td class="p-4 border-t border-gray-200">Content & Copywriting</td>
+            <td class="p-4 border-t border-gray-200">Descriptions<b class="text-blue-600">$200+</b><br><span class="text-xs text-gray-500">Compelling copy for your product listings.</span></td>
+            <td class="p-4 border-t border-gray-200">Catalog + posts<b class="text-blue-600">$500+</b><br><span class="text-xs text-gray-500">Create engaging content for your online catalog.</span></td>
+            <td class="p-4 border-t border-gray-200">Strategy & sequences<b class="text-blue-600">$1,500/mo est.</b><br><span class="text-xs text-gray-500">Manage content calendars and email campaigns.</span></td>
+          </tr>
+          <tr>
+            <td class="p-4 border-t border-gray-200">Customer Service & Sales Agents</td>
+            <td class="p-4 border-t border-gray-200">Helpdesk<b class="text-blue-600">$200/mo</b><br><span class="text-xs text-gray-500">Provide basic customer service.</span></td>
+            <td class="p-4 border-t border-gray-200">Support & rep<b class="text-blue-600">$500/mo</b><br><span class="text-xs text-gray-500">Dedicated support and sales representative.</span></td>
+            <td class="p-4 border-t border-gray-200">Dedicated team<b class="text-blue-600">$1,000–$2,000/mo</b><br><span class="text-xs text-gray-500">Full-scale support and sales team for your business.</span></td>
+          </tr>
+          <tr>
+            <td class="p-4 border-t border-gray-200">Strategic Vendor Collaboration</td>
+            <td class="p-4 border-t border-gray-200">Discovery<b class="text-blue-600">$350+</b><br><span class="text-xs text-gray-500">Identify niche vendors for your business.</span></td>
+            <td class="p-4 border-t border-gray-200">Collaboration<b class="text-blue-600">$750+</b><br><span class="text-xs text-gray-500">Managed projects with a trusted partner.</span></td>
+            <td class="p-4 border-t border-gray-200">Full Alignment<b class="text-blue-600">$1,500–$3,000+</b><br><span class="text-xs text-gray-500">End-to-end management of culturally-aligned projects.</span></td>
+          </tr>
+          <tr>
+            <td colspan="4" class="p-4 bg-gray-100 text-gray-600 rounded-b-2xl">
+              <span class="font-normal text-gray-800">Note:</span> Prices are for typical project sizes and can vary based on your needs. All packages can be tailored. <a href="#contact" class="text-blue-600 underline nav-link" data-page="home-page">Book a free custom quote</a>.
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Event Companies Matrix -->
+    <div id="event" class="matrix overflow-x-auto shadow-lg rounded-2xl hidden">
+      <table class="w-full text-left bg-white">
+        <thead class="bg-gray-100">
+          <tr>
+            <th class="p-4 font-normal rounded-tl-2xl">Service Area</th>
+            <th class="p-4 font-normal">Starter<br><span class="text-blue-600 text-sm">($500+)</span></th>
+            <th class="p-4 font-normal">Engage & Grow<br><span class="text-blue-600 text-sm">($1,500+)</span></th>
+            <th class="p-4 font-normal rounded-tr-2xl">Ultimate Event Tech<br><span class="text-blue-600 text-sm">($4,000–$8,000+)</span></th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="p-4 border-t border-gray-200">Branding & Design</td>
+            <td class="p-4 border-t border-gray-200">Logo & flyer<b class="text-blue-600">$500+</b><br><span class="text-xs text-gray-500">Essential branding for a new event.</span></td>
+            <td class="p-4 border-t border-gray-200">Site & templates<b class="text-blue-600">$1,100+</b><br><span class="text-xs text-gray-500">Cohesive branding across all event materials.</span></td>
+            <td class="p-4 border-t border-gray-200">Full branding & merch<b class="text-blue-600">$3,000–$5,000+</b><br><span class="text-xs text-gray-500">Full-scale event branding and merchandise design.</span></td>
+          </tr>
+          <tr>
+            <td class="p-4 border-t border-gray-200">Event Website</td>
+            <td class="p-4 border-t border-gray-200">Landing page<b class="text-blue-600">$600+</b><br><span class="text-xs text-gray-500">Quick launch page for event promotion.</span></td>
+            <td class="p-4 border-t border-gray-200">Registration site<b class="text-blue-600">$1,500+</b><br><span class="text-xs text-gray-500">Dedicated site for easy attendee registration.</span></td>
+            <td class="p-4 border-t border-gray-200">Multi-page custom<b class="text-blue-600">$4,000–$8,000+</b><br><span class="text-xs text-gray-500">Comprehensive event site with custom features.</span></td>
+          </tr>
+          <tr>
+            <td class="p-4 border-t border-gray-200">NFC & Check-in</td>
+            <td class="p-4 border-t border-gray-200">Digital badge<b class="text-blue-600">$150+</b><br><span class="text-xs text-gray-500">Basic digital badges for attendees.</span></td>
+            <td class="p-4 border-t border-gray-200">NFC badge + check-in<b class="text-blue-600">$600+</b><br><span class="text-xs text-gray-500">Fast, contactless check-in with NFC badges.</span></td>
+            <td class="p-4 border-t border-gray-200">RFID & On-Site Experience<b class="text-blue-600">$2,000+</b><br><span class="text-xs text-gray-500">Full-scale NFC/RFID system for event tracking.</span></td>
+          </tr>
+          <tr>
+            <td class="p-4 border-t border-gray-200">Digital Marketing</td>
+            <td class="p-4 border-t border-gray-200">Listing setup<b class="text-blue-600">$300</b><br><span class="text-xs text-gray-500">Ensure your event is visible on key platforms.</span></td>
+            <td class="p-4 border-t border-gray-200">Social & email campaign<b class="text-blue-600">$800</b><br><span class="text-xs text-gray-500">Generate buzz with targeted social media campaigns.</span></td>
+            <td class="p-4 border-t border-gray-200">Advanced ads & analytics<b class="text-blue-600">$1,500–$3,000</b><br><span class="text-xs text-gray-500">Drive ticket sales with advanced ad strategies.</span></td>
+          </tr>
+          <tr>
+            <td class="p-4 border-t border-gray-200">IT & AV Support</td>
+            <td class="p-4 border-t border-gray-200">Consulting guide<b class="text-blue-600">$200+</b><br><span class="text-xs text-gray-500">Expert guidance on technical setup.</span></td>
+            <td class="p-4 border-t border-gray-200">On-site AV advice<b class="text-blue-600">$600+</b><br><span class="text-xs text-gray-500">Get pre-event advice on AV setup.</span></td>
+            <td class="p-4 border-t border-gray-200">Dedicated On-Site Team<b class="text-blue-600">$1,200+/day</b><br><span class="text-xs text-gray-500">Dedicated on-site technical assistance.</span></td>
+          </tr>
+          <tr>
+            <td class="p-4 border-t border-gray-200">Project Management</td>
+            <td class="p-4 border-t border-gray-200">Coordination basics<b class="text-blue-600">$300+</b><br><span class="text-xs text-gray-500">Initial planning and coordination.</span></td>
+            <td class="p-4 border-t border-gray-200">Venue & Vendor Logistics<b class="text-blue-600">$900+</b><br><span class="text-xs text-gray-500">Ensure a smooth-running event with vendor management.</span></td>
+            <td class="p-4 border-t border-gray-200">Full event management<b class="text-blue-600">$3,000–$6,000+</b><br><span class="text-xs text-gray-500">End-to-end management for complex events.</span></td>
+          </tr>
+          <tr>
+            <td class="p-4 border-t border-gray-200">Video & Streaming</td>
+            <td class="p-4 border-t border-gray-200">Highlight clip<b class="text-blue-600">$400+</b><br><span class="text-xs text-gray-500">Capture and share the best moments of your event.</span></td>
+            <td class="p-4 border-t border-gray-200">Live stream + edits<b class="text-blue-600">$1,000+</b><br><span class="text-xs text-gray-500">Professional live streaming and post-event edits.</span></td>
+            <td class="p-4 border-t border-gray-200">Multi-cam livestream & recap<b class="text-blue-600">$3,000–$8,000+</b><br><span class="text-xs text-gray-500">Full-scale production with multiple cameras and a video recap.</span></td>
+          </tr>
+          <tr>
+            <td class="p-4 border-t border-gray-200">Content & Copywriting</td>
+            <td class="p-4 border-t border-gray-200">Page copy & templates<b class="text-blue-600">$200+</b><br><span class="text-xs text-gray-500">Basic copy for event pages and promotional templates.</span></td>
+            <td class="p-4 border-t border-gray-200">Blog post & emails<b class="text-blue-600">$600+</b><br><span class="text-xs text-gray-500">Build anticipation with engaging blog posts and email campaigns.</span></td>
+            <td class="p-4 border-t border-gray-200">Content calendar & live updates<b class="text-blue-600">$1,500/mo est.</b><br><span class="text-xs text-gray-500">Comprehensive content strategy and live updates for the event.</span></td>
+          </tr>
+          <tr>
+            <td class="p-4 border-t border-gray-200">Customer Service & Sales Agents</td>
+            <td class="p-4 border-t border-gray-200">Event hotline/chat<b class="text-blue-600">$250/event</b><br><span class="text-xs text-gray-500">Answer attendee questions with a dedicated hotline.</span></td>
+            <td class="p-4 border-t border-gray-200">Live agent desk<b class="text-blue-600">$700/event</b><br><span class="text-xs text-gray-500">On-site support with a dedicated agent desk.</span></td>
+            <td class="p-4 border-t border-gray-200">Attendee/sponsor follow-up<b class="text-blue-600">$1,500–$3,000/event</b><br><span class="text-xs text-gray-500">Comprehensive post-event follow-up.</span></td>
+          </tr>
+          <tr>
+            <td class="p-4 border-t border-gray-200">Strategic Vendor Collaboration</td>
+            <td class="p-4 border-t border-gray-200">Discovery<b class="text-blue-600">$350+</b><br><span class="text-xs text-gray-500">Identify niche vendors for your business.</span></td>
+            <td class="p-4 border-t border-gray-200">Collaboration<b class="text-blue-600">$750+</b><br><span class="text-xs text-gray-500">Managed projects with a trusted partner.</span></td>
+            <td class="p-4 border-t border-gray-200">Full Alignment<b class="text-blue-600">$1,500–$3,000+</b><br><span class="text-xs text-gray-500">End-to-end management of culturally-aligned projects.</span></td>
+          </tr>
+          <tr>
+            <td colspan="4" class="p-4 bg-gray-100 text-gray-600 rounded-b-2xl">
+              <span class="font-normal text-gray-800">Note:</span> Prices are for typical project sizes and can vary based on your needs. All packages can be tailored. <a href="#contact" class="text-blue-600 underline nav-link" data-page="home-page">Book a free custom quote</a>.
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Blog Page -->
+  <div id="blog-page" class="page-content py-16 px-6 container mx-auto">
+    <button class="bg-blue-600 text-white font-semibold py-2 px-6 rounded-full hover:bg-blue-700 transition-colors mb-8 nav-link" data-page="home-page">
+      ← Back to Home
+    </button>
+    <h1 class="text-4xl font-normal text-gray-900 text-center mb-12">Our Blog</h1>
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+      <!-- Quiz Card -->
+      <article class="bg-white rounded-3xl shadow-md p-6 flex flex-col hover:shadow-xl transition-all duration-300">
+        <div class="w-full h-40 rounded-xl mb-4 flex items-center justify-center text-8xl text-blue-600 bg-gray-200">🤔</div>
+        <div class="flex-grow">
+          <h3 class="text-xl font-normal text-gray-800 mb-2">Not Sure Where to Start?</h3>
+          <p class="text-gray-600 text-sm mb-4">
+            Take our quick quiz to discover your business's current digital needs and get a personalized service recommendation.
+          </p>
+        </div>
+        <a href="#quiz" class="text-blue-600 font-semibold hover:underline mt-auto nav-link" data-page="quiz-page">Take the Quiz &rarr;</a>
+      </article>
+      <!-- Blog Post 1 -->
+      <article class="bg-white rounded-3xl shadow-md p-6 flex flex-col hover:shadow-xl transition-all duration-300">
+        <div class="w-full h-40 rounded-xl mb-4 flex items-center justify-center text-8xl text-blue-600 bg-gray-200">🧲</div>
+        <div class="flex-grow">
+          <h3 class="text-xl font-normal text-gray-800 mb-2">Is Your Website a Lead Magnet or a Black Hole?</h3>
+          <p class="text-gray-600 text-sm mb-4">
+            You've invested in a website, but are you seeing a return? Discover the critical mistakes that turn potential customers away and how to fix them.
+          </p>
+        </div>
+        <a href="#blog-post-1" class="text-blue-600 font-semibold hover:underline mt-auto nav-link" data-page="blog-post-1-page">Read More &rarr;</a>
+      </article>
+      <!-- Blog Post 2 -->
+      <article class="bg-white rounded-3xl shadow-md p-6 flex flex-col hover:shadow-xl transition-all duration-300">
+        <div class="w-full h-40 rounded-xl mb-4 flex items-center justify-center text-8xl text-blue-600 bg-gray-200">🗣️</div>
+        <div class="flex-grow">
+          <h3 class="text-xl font-normal text-gray-800 mb-2">You're Posting on Social Media, But Are You Talking to an Empty Room?</h3>
+          <p class="text-gray-600 text-sm mb-4">
+            Posting daily doesn't guarantee engagement. Learn how to stop wasting your time and start building a community that actually cares about your brand.
+          </p>
+        </div>
+        <a href="#blog-post-2" class="text-blue-600 font-semibold hover:underline mt-auto nav-link" data-page="blog-post-2-page">Read More &rarr;</a>
+      </article>
+      <!-- Blog Post 3 -->
+      <article class="bg-white rounded-3xl shadow-md p-6 flex flex-col hover:shadow-xl transition-all duration-300">
+        <div class="w-full h-40 rounded-xl mb-4 flex items-center justify-center text-8xl text-blue-600 bg-gray-200">💸</div>
+        <div class="flex-grow">
+          <h3 class="text-xl font-normal text-gray-800 mb-2">The Hidden Costs of DIY Marketing</h3>
+          <p class="text-gray-600 text-sm mb-4">
+            Your time is your most valuable asset. See how attempting to do it all yourself can cost you more than hiring a professional.
+          </p>
+        </div>
+        <a href="#blog-post-3" class="text-blue-600 font-semibold hover:underline mt-auto nav-link" data-page="blog-post-3-page">Read More &rarr;</a>
+      </article>
+      <!-- Blog Post 4 -->
+      <article class="bg-white rounded-3xl shadow-md p-6 flex flex-col hover:shadow-xl transition-all duration-300">
+        <div class="w-full h-40 rounded-xl mb-4 flex items-center justify-center text-8xl text-blue-600 bg-gray-200">🔍</div>
+        <div class="flex-grow">
+          <h3 class="text-xl font-normal text-gray-800 mb-2">Why Your SEO Isn't Working: It's Not What You Think</h3>
+          <p class="text-gray-600 text-sm mb-4">
+            Stuck on page two of Google? Discover the surprising reason your search rankings are stagnant and the simple changes that can make a huge impact.
+          </p>
+        </div>
+        <a href="#blog-post-4" class="text-blue-600 font-semibold hover:underline mt-auto nav-link" data-page="blog-post-4-page">Read More &rarr;</a>
+      </article>
+      <!-- Blog Post 5 -->
+      <article class="bg-white rounded-3xl shadow-md p-6 flex flex-col hover:shadow-xl transition-all duration-300">
+        <div class="w-full h-40 rounded-xl mb-4 flex items-center justify-center text-8xl text-blue-600 bg-gray-200">🤖</div>
+        <div class="flex-grow">
+          <h3 class="text-xl font-normal text-gray-800 mb-2">Automation Is Stealing Your Time (Unless You Do This)</h3>
+          <p class="text-gray-600 text-sm mb-4">
+            Automation is supposed to save you time. So why do you feel like you're still doing everything manually? Here's the key to making it work for you.
+          </p>
+        </div>
+        <a href="#blog-post-5" class="text-blue-600 font-semibold hover:underline mt-auto nav-link" data-page="blog-post-5-page">Read More &rarr;</a>
+      </article>
+      <!-- Blog Post 6 -->
+      <article class="bg-white rounded-3xl shadow-md p-6 flex flex-col hover:shadow-xl transition-all duration-300">
+        <div class="w-full h-40 rounded-xl mb-4 flex items-center justify-center text-8xl text-blue-600 bg-gray-200">🤔</div>
+        <div class="flex-grow">
+          <h3 class="text-xl font-normal text-gray-800 mb-2">Your Competitors Are Using AI. Are You Falling Behind?</h3>
+          <p class="text-gray-600 text-sm mb-4">
+            AI isn't the future, it's the present. Find out how your business can leverage AI to stay competitive and streamline your operations.
+          </p>
+        </div>
+        <a href="#blog-post-6" class="text-blue-600 font-semibold hover:underline mt-auto nav-link" data-page="blog-post-6-page">Read More &rarr;</a>
+      </article>
+      <!-- Blog Post 7 -->
+      <article class="bg-white rounded-3xl shadow-md p-6 flex flex-col hover:shadow-xl transition-all duration-300">
+        <div class="w-full h-40 rounded-xl mb-4 flex items-center justify-center text-8xl text-blue-600 bg-gray-200">💡</div>
+        <div class="flex-grow">
+          <h3 class="text-xl font-normal text-gray-800 mb-2">The AI Revolution: What AI Can't Do (And Why That's Good for Your Business)</h3>
+          <p class="text-gray-600 text-sm mb-4">
+            AI is a powerful tool, but it lacks human creativity and cultural nuance. Discover why human-led strategy is more important than ever for true brand growth.
+          </p>
+        </div>
+        <a href="#blog-post-7" class="text-blue-600 font-semibold hover:underline mt-auto nav-link" data-page="blog-post-7-page">Read More &rarr;</a>
+      </article>
+    </div>
+  </div>
+
+  <!-- Blog Post 1: Website as a Lead Magnet -->
+  <div id="blog-post-1-page" class="page-content py-16 px-6 container mx-auto">
+    <button class="bg-blue-600 text-white font-semibold py-2 px-6 rounded-full hover:bg-blue-700 transition-colors mb-8 nav-link" data-page="blog-page">
+      ← Back to Blog
+    </button>
+    <div class="bg-white rounded-3xl shadow-xl p-8 md:p-16">
+      <h1 class="text-4xl font-normal text-gray-900 mb-6 text-center">Is Your Website a Lead Magnet or a Black Hole?</h1>
+      <p class="text-gray-600 mb-8 text-sm text-center">Published: October 26, 2023</p>
+      <div class="max-w-4xl mx-auto py-8">
+        <p class="text-gray-700 leading-relaxed text-justify mb-6">A website is more than just an online brochure—it’s your most valuable asset for attracting customers. But for many businesses, it's a "black hole" where visitors arrive and then vanish without a trace. A truly effective website is a lead magnet, designed to capture visitor attention and guide them toward a meaningful action. The difference lies in a few key areas: clear calls-to-action, a streamlined user experience, and content that speaks directly to your ideal customer’s pain points. Without these elements, your website might be a beautiful digital showcase, but it's not working for you.</p>
+        <p class="text-gray-700 leading-relaxed text-justify mb-6">A lead magnet website simplifies the journey from visitor to client. It anticipates questions, provides clear solutions, and makes it effortless for someone to get in touch or make a purchase. By focusing on conversion-driven design and persuasive copywriting, you can transform your online presence from a passive space into a dynamic engine for growth.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Blog Post 2: Social Media Empty Room -->
+  <div id="blog-post-2-page" class="page-content py-16 px-6 container mx-auto">
+    <button class="bg-blue-600 text-white font-semibold py-2 px-6 rounded-full hover:bg-blue-700 transition-colors mb-8 nav-link" data-page="blog-page">
+      ← Back to Blog
+    </button>
+    <div class="bg-white rounded-3xl shadow-xl p-8 md:p-16">
+      <h1 class="text-4xl font-normal text-gray-900 mb-6 text-center">You're Posting on Social Media, But Are You Talking to an Empty Room?</h1>
+      <p class="text-gray-600 mb-8 text-sm text-center">Published: October 26, 2023</p>
+      <div class="max-w-4xl mx-auto py-8">
+        <p class="text-gray-700 leading-relaxed text-justify mb-6">Many businesses treat social media as a one-way street, broadcasting their messages without ever listening for a response. The result? A lot of noise and very little engagement. If your posts feel like they're falling into an "empty room," it's time to rethink your strategy. Social media is about building relationships, not just racking up likes. The key is to create two-way conversations, ask questions, respond genuinely to comments, and use content that sparks a dialogue.</p>
+        <p class="text-gray-700 leading-relaxed text-justify mb-6">Building a community on social media takes time and a shift in mindset. It’s not about perfecting an algorithm; it’s about authentic human connection. By focusing on interaction over simple information delivery, you can transform your social profiles into lively hubs where customers feel seen, heard, and valued. That's how you turn a quiet room into a buzzing community.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Blog Post 3: Hidden Costs of DIY Marketing -->
+  <div id="blog-post-3-page" class="page-content py-16 px-6 container mx-auto">
+    <button class="bg-blue-600 text-white font-semibold py-2 px-6 rounded-full hover:bg-blue-700 transition-colors mb-8 nav-link" data-page="blog-page">
+      ← Back to Blog
+    </button>
+    <div class="bg-white rounded-3xl shadow-xl p-8 md:p-16">
+      <h1 class="text-4xl font-normal text-gray-900 mb-6 text-center">The Hidden Costs of DIY Marketing</h1>
+      <p class="text-gray-600 mb-8 text-sm text-center">Published: October 26, 2023</p>
+      <div class="max-w-4xl mx-auto py-8">
+        <p class="text-gray-700 leading-relaxed text-justify mb-6">For many small business owners, handling marketing in-house seems like a smart way to save money. The truth is, the "do-it-yourself" approach often comes with hidden costs that are far greater than an agency's fee. The most significant cost? Your time. Every hour you spend trying to learn SEO, design a graphic, or write a blog post is an hour you’re not spending on what truly matters: running your business. These efforts can also lead to subpar results, which can damage your brand and fail to generate a meaningful return on investment.</p>
+        <p class="text-gray-700 leading-relaxed text-justify mb-6">Hiring a professional team isn't just about outsourcing tasks; it's about gaining expertise, efficiency, and a dedicated focus on growth. The right partners can help you avoid costly trial-and-error, implement proven strategies, and free you up to do what you do best. The real value isn't just in what they do, but in the time, stress, and missed opportunities they save you.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Blog Post 4: Why Your SEO Isn't Working -->
+  <div id="blog-post-4-page" class="page-content py-16 px-6 container mx-auto">
+    <button class="bg-blue-600 text-white font-semibold py-2 px-6 rounded-full hover:bg-blue-700 transition-colors mb-8 nav-link" data-page="blog-page">
+      ← Back to Blog
+    </button>
+    <div class="bg-white rounded-3xl shadow-xl p-8 md:p-16">
+      <h1 class="text-4xl font-normal text-gray-900 mb-6 text-center">Why Your SEO Isn't Working: It's Not What You Think</h1>
+      <p class="text-gray-600 mb-8 text-sm text-center">Published: October 26, 2023</p>
+      <div class="max-w-4xl mx-auto py-8">
+        <p class="text-gray-700 leading-relaxed text-justify mb-6">Many businesses believe that SEO is just about keywords and backlinks. While those are important, they are only part of the puzzle. The real reason your SEO might be stagnant is often related to a poor user experience. Search engines now prioritize websites that are fast, mobile-friendly, and provide valuable content that keeps users on the page. If your site is slow or difficult to navigate, no amount of technical SEO will help you climb the rankings.</p>
+        <p class="text-gray-700 leading-relaxed text-justify mb-6">Effective SEO is a holistic strategy that combines technical optimization with great content and a fantastic user experience. It's about building a website that both search engines and people love. By fixing core user-focused issues, you not only improve your ranking but also create a website that actually converts visitors into customers.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Blog Post 5: Automation Is Stealing Your Time -->
+  <div id="blog-post-5-page" class="page-content py-16 px-6 container mx-auto">
+    <button class="bg-blue-600 text-white font-semibold py-2 px-6 rounded-full hover:bg-blue-700 transition-colors mb-8 nav-link" data-page="blog-page">
+      ← Back to Blog
+    </button>
+    <div class="bg-white rounded-3xl shadow-xl p-8 md:p-16">
+      <h1 class="text-4xl font-normal text-gray-900 mb-6 text-center">Automation Is Stealing Your Time (Unless You Do This)</h1>
+      <p class="text-gray-600 mb-8 text-sm text-center">Published: October 26, 2023</p>
+      <div class="max-w-4xl mx-auto py-8">
+        <p class="text-gray-700 leading-relaxed text-justify mb-6">Automation is pitched as a time-saver, but if implemented incorrectly, it can become a time sink. Many businesses get bogged down in setting up complex workflows that are not optimized for their actual processes. The result is a system that requires constant manual intervention, defeating the entire purpose of automation. The key to successful automation is a streamlined workflow, a clear understanding of your business's pain points, and simple, robust integrations that just work.</p>
+        <p class="text-gray-700 leading-relaxed text-justify mb-6">The best automation strategies start with a deep understanding of your business. Rather than trying to automate everything at once, focus on a few key, repetitive tasks that consume the most time, like lead follow-up or inventory tracking. By starting small and building on a solid foundation, you can create a system that truly saves you time, allowing you to focus on strategic growth.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Blog Post 6: Your Competitors Are Using AI -->
+  <div id="blog-post-6-page" class="page-content py-16 px-6 container mx-auto">
+    <button class="bg-blue-600 text-white font-semibold py-2 px-6 rounded-full hover:bg-blue-700 transition-colors mb-8 nav-link" data-page="blog-page">
+      ← Back to Blog
+    </button>
+    <div class="bg-white rounded-3xl shadow-xl p-8 md:p-16">
+      <h1 class="text-4xl font-normal text-gray-900 mb-6 text-center">Your Competitors Are Using AI. Are You Falling Behind?</h1>
+      <p class="text-gray-600 mb-8 text-sm text-center">Published: October 26, 2023</p>
+      <div class="max-w-4xl mx-auto py-8">
+        <p class="text-gray-700 leading-relaxed text-justify mb-6">In today's fast-paced market, businesses that fail to adapt quickly fall behind. AI is no longer a futuristic concept—it's a tool that your competitors are already using to gain a competitive edge. From automating customer service and generating content to providing powerful data analytics, AI can streamline operations and help you make smarter decisions. If you aren't exploring how AI can help your business, you risk losing ground to those who are.</p>
+        <p class="text-gray-700 leading-relaxed text-justify mb-6">The good news is that implementing AI doesn't have to be complex or expensive. Many entry-level tools and services are available that can provide immediate value without a major overhaul. The key is to start small, identify a single pain point, and use AI to solve it. By taking a proactive approach, you can transform a potential threat into your biggest competitive advantage.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Privacy Policy Page -->
+  <div id="privacy-page" class="page-content py-16 px-6 container mx-auto">
+    <button class="bg-blue-600 text-white font-semibold py-2 px-6 rounded-full hover:bg-blue-700 transition-colors mb-8 nav-link" data-page="home-page">
+      ← Back to Home
+    </button>
+    <h1 class="text-4xl font-normal text-center text-gray-900 mb-6">Privacy Policy</h1>
+    <div class="max-w-4xl mx-auto py-8">
+      <p class="text-gray-700 leading-relaxed text-justify mb-6"><strong>Last Updated: October 26, 2023</strong></p>
+      <p class="text-gray-700 leading-relaxed text-justify mb-6">This Privacy Policy describes how Auctora Consulting ("we," "us," or "our") handles personal information we collect from you when you visit our website, use our services, or interact with our digital tools.</p>
+      <h2 class="text-2xl font-normal mt-8 mb-4 text-gray-800">1. Information We Collect</h2>
+      <p class="text-gray-700 leading-relaxed text-justify mb-2">We may collect the following types of information:</p>
+      <ul class="list-disc list-inside space-y-2 text-gray-700">
+        <li><strong>Contact Information:</strong> When you use our contact forms, we collect your name, email address, phone number, and any other information you provide.</li>
+        <li><strong>Usage Data:</strong> We automatically collect information about how you interact with our site, suchs as pages visited, time spent, and browser type. This helps us improve our website and services.</li>
+        <li><strong>Third-Party Integrations:</strong> When you use our AI Strategist tool, your input is sent to the Gemini API to generate a response. Your data is not stored or associated with your identity by us.</li>
+        <li><strong>Cookies and Tracking:</strong> We use cookies to enhance your experience, analyze site usage, and personalize content. You can manage your cookie preferences through your browser settings.</li>
+      </ul>
+      <h2 class="text-2xl font-normal mt-8 mb-4 text-gray-800">2. How We Use Your Information</h2>
+      <p class="text-gray-700 leading-relaxed text-justify mb-2">We use the collected information to:</p>
+      <ul class="list-disc list-inside space-y-2 text-gray-700">
+        <li>Provide, operate, and maintain our website and services.</li>
+        <li>Communicate with you, respond to inquiries, and provide customer support.</li>
+        <li>Process and fulfill your requests for our services.</li>
+        <li>Improve our website, services, and marketing efforts.</li>
+        <li>Ensure the security and integrity of our systems.</li>
+      </ul>
+      <h2 class="text-2xl font-normal mt-8 mb-4 text-gray-800">3. Data Sharing and Disclosure</h2>
+      <p class="text-gray-700 leading-relaxed text-justify mb-2">We do not sell your personal information. We may share your information with:</p>
+      <ul class="list-disc list-inside space-y-2 text-gray-700">
+        <li><strong>Service Providers:</strong> We use third-party services (e.g., web hosting, API providers) to assist with our operations. These providers are obligated to protect your information.</li>
+        <li><strong>Legal Compliance:</strong> We may disclose information if required by law or to protect our rights, property, or safety.</li>
+      </ul>
+      <h2 class="text-2xl font-normal mt-8 mb-4 text-gray-800">5. Changes to This Policy</h2>
+      <p class="text-gray-700 leading-relaxed text-justify mb-6">We may update this Privacy Policy from time to time. We will notify you of any changes by posting the new policy on this page and updating the "Last Updated" date.</p>
+    </div>
+  </div>
+
+  <!-- Terms and Conditions Page -->
+  <div id="terms-page" class="page-content py-16 px-6 container mx-auto">
+    <button class="bg-blue-600 text-white font-semibold py-2 px-6 rounded-full hover:bg-blue-700 transition-colors mb-8 nav-link" data-page="home-page">
+      ← Back to Home
+    </button>
+    <h1 class="text-4xl font-normal text-center text-gray-900 mb-6">Terms & Conditions</h1>
+    <div class="max-w-4xl mx-auto py-8">
+      <p class="text-gray-700 leading-relaxed text-justify mb-6"><strong>Last Updated: October 26, 2023</strong></p>
+      <h2 class="text-2xl font-normal mt-8 mb-4 text-gray-800">1. Acceptance of Terms</h2>
+      <p class="text-gray-700 leading-relaxed text-justify mb-6">By accessing and using this website, you accept and agree to be bound by the terms and provisions of this agreement. If you do not agree to abide by the above, please do not use this service.</p>
+      <h2 class="text-2xl font-normal mt-8 mb-4 text-gray-800">2. Services Offered</h2>
+      <p class="text-gray-700 leading-relaxed text-justify mb-6">Auctora Consulting provides a range of digital solutions, including branding, web development, marketing, and IT support. All services are subject to a separate service agreement that outlines specific deliverables, timelines, and costs.</p>
+      <h2 class="text-2xl font-normal mt-8 mb-4 text-gray-800">3. Use of the Website</h2>
+      <p class="text-gray-700 leading-relaxed text-justify mb-6">You agree to use the website and its services only for lawful purposes. You are prohibited from using the site to engage in any activity that is harmful, illegal, or infringes on the rights of others.</p>
+      <h2 class="text-2xl font-normal mt-8 mb-4 text-gray-800">4. Intellectual Property</h2>
+      <p class="text-gray-700 leading-relaxed text-justify mb-6">All content on this website, including text, graphics, logos, and software, is the property of Auctora Consulting or its content suppliers and is protected by intellectual property laws. You may not reproduce, distribute, or create derivative works from this content without our express written permission.</p>
+      <h2 class="text-2xl font-normal mt-8 mb-4 text-gray-800">5. Disclaimer of Warranties</h2>
+      <p class="text-gray-700 leading-relaxed text-justify mb-6">The information and services on this website are provided "as is" without any warranties, express or implied. We do not guarantee that the site will be error-free or that it will meet your specific needs.</p>
+      <h2 class="text-2xl font-normal mt-8 mb-4 text-gray-800">6. Limitation of Liability</h2>
+      <p class="text-gray-700 leading-relaxed text-justify mb-6">Auctora Consulting will not be liable for any direct, indirect, incidental, or consequential damages resulting from the use or inability to use this website or its services.</p>
+      <h2 class="text-2xl font-normal mt-8 mb-4 text-gray-800">7. Governing Law</h2>
+      <p class="text-gray-700 leading-relaxed text-justify mb-6">This agreement is governed by and construed in accordance with the laws of the state of Texas, and you submit to the exclusive jurisdiction of the state and federal courts located in Texas for the resolution of any disputes.</p>
+    </div>
+  </div>
+
+  <!-- Consultation Page -->
+  <div id="consultation-page" class="page-content py-16 px-6 container mx-auto">
+    <button class="bg-blue-600 text-white font-semibold py-2 px-6 rounded-full hover:bg-blue-700 transition-colors mb-8 nav-link" data-page="home-page">
+      ← Back to Home
+    </button>
+    <div class="bg-white rounded-3xl shadow-xl p-8 md:p-16 text-center">
+      <h1 class="text-3xl md:text-4xl font-normal text-gray-800 mb-4">Book Your Free Consultation</h1>
+      <p class="text-lg text-gray-600 mb-8 max-w-2xl mx-auto">
+        Please fill out the form below to schedule a time to discuss your business needs. We'll find a time that works for you.
+      </p>
+      <form id="consultation-form" class="flex flex-col items-center w-full max-w-2xl mx-auto gap-6">
+        <div class="w-full flex flex-col sm:flex-row gap-4">
+          <input type="text" id="consultation-name" placeholder="Your Name" required
+            class="w-full p-4 rounded-full border-2 border-gray-300 bg-gray-50 text-gray-800 placeholder-gray-400 focus:outline-none focus:border-blue-500 transition-colors">
+          <input type="email" id="consultation-email" placeholder="Your Email" required
+            class="w-full p-4 rounded-full border-2 border-gray-300 bg-gray-50 text-gray-800 placeholder-gray-400 focus:outline-none focus:border-blue-500 transition-colors">
+        </div>
+        <div class="w-full">
+          <label for="consultation-date" class="block text-left text-gray-600 mb-2">
+            Select a Preferred Date
+          </label>
+          <input type="date" id="consultation-date" required
+            class="w-full p-4 rounded-full border-2 border-gray-300 bg-gray-50 text-gray-800 focus:outline-none focus:border-blue-500 transition-colors">
+        </div>
+        <textarea id="consultation-message" placeholder="Briefly describe your business and what you'd like to discuss."
+          class="w-full p-4 rounded-2xl border-2 border-gray-300 bg-gray-50 text-gray-800 focus:outline-none focus:border-blue-500 transition-colors" rows="5"></textarea>
+        <button type="submit"
+          class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-4 px-8 rounded-full transition duration-300 transform hover:scale-105">
+          Schedule Consultation
+        </button>
+      </form>
+      <div id="consultation-message-box" class="mt-8 text-left bg-gray-100 p-6 rounded-2xl shadow-inner hidden">
+        <p class="text-gray-700 leading-relaxed"></p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Quiz Page -->
+  <div id="quiz-page" class="page-content py-16 px-6 container mx-auto">
+    <button class="bg-blue-600 text-white font-semibold py-2 px-6 rounded-full hover:bg-blue-700 transition-colors mb-8 nav-link" data-page="blog-page">
+      ← Back to Blog
+    </button>
+    <div class="bg-white rounded-3xl shadow-xl p-8 md:p-16 text-center">
+      <h1 class="text-3xl md:text-4xl font-normal text-gray-800 mb-4">Find Your Perfect Service Tier</h1>
+      <p class="text-lg text-gray-600 mb-8 max-w-2xl mx-auto">
+        Answer these quick questions to get a personalized recommendation for your business.
+      </p>
+      
+      <div id="quiz-questions">
+        <!-- Question 1 -->
+        <div id="question-1" class="quiz-question text-left mb-8">
+          <h3 class="text-xl font-normal text-gray-800 mb-4">1. What is your current business goal?</h3>
+          <ul class="space-y-4">
+            <li>
+              <button class="quiz-answer w-full p-4 rounded-xl text-left hover:bg-gray-100 transition-colors" data-points="1">
+                A. Launching my first business or project.
+              </button>
+            </li>
+            <li>
+              <button class="quiz-answer w-full p-4 rounded-xl text-left hover:bg-gray-100 transition-colors" data-points="2">
+                B. Scaling my existing customer base and revenue.
+              </button>
+            </li>
+            <li>
+              <button class="quiz-answer w-full p-4 rounded-xl text-left hover:bg-gray-100 transition-colors" data-points="3">
+                C. Dominating my market and maximizing long-term growth.
+              </button>
+            </li>
+          </ul>
+        </div>
+        <!-- Question 2 -->
+        <div id="question-2" class="quiz-question text-left hidden mb-8">
+          <h3 class="text-xl font-normal text-gray-800 mb-4">2. What is your biggest digital marketing challenge?</h3>
+          <ul class="space-y-4">
+            <li>
+              <button class="quiz-answer w-full p-4 rounded-xl text-left hover:bg-gray-100 transition-colors" data-points="1">
+                A. I need a professional website and a basic online presence.
+              </button>
+            </li>
+            <li>
+              <button class="quiz-answer w-full p-4 rounded-xl text-left hover:bg-gray-100 transition-colors" data-points="2">
+                B. I need to improve my SEO and social media engagement.
+              </button>
+            </li>
+            <li>
+              <button class="quiz-answer w-full p-4 rounded-xl text-left hover:bg-gray-100 transition-colors" data-points="3">
+                C. I need advanced automation and a comprehensive content strategy.
+              </button>
+            </li>
+          </ul>
+        </div>
+        <!-- Question 3 -->
+        <div id="question-3" class="quiz-question text-left hidden mb-8">
+          <h3 class="text-xl font-normal text-gray-800 mb-4">3. What is your current team size and structure?</h3>
+          <ul class="space-y-4">
+            <li>
+              <button class="quiz-answer w-full p-4 rounded-xl text-left hover:bg-gray-100 transition-colors" data-points="1">
+                A. It's just me, or a very small team. I need external support.
+              </button>
+            </li>
+            <li>
+              <button class="quiz-answer w-full p-4 rounded-xl text-left hover:bg-gray-100 transition-colors" data-points="2">
+                B. We have a small team but need to scale our operations efficiently.
+              </button>
+            </li>
+            <li>
+              <button class="quiz-answer w-full p-4 rounded-xl text-left hover:bg-gray-100 transition-colors" data-points="3">
+                C. We have an established team and need specialized, high-level support.
+              </button>
+            </li>
+          </ul>
+        </div>
+        
+        <button id="next-quiz-btn" class="bg-blue-600 text-white font-semibold py-4 px-8 rounded-full hover:bg-blue-700 transition duration-300 transform hover:scale-105 mt-8">
+          Next Question
+        </button>
+        <div id="quiz-warning" class="text-red-500 mt-4 hidden">Please select an answer to continue.</div>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Quiz Results Page -->
+  <div id="quiz-results-page" class="page-content py-16 px-6 container mx-auto text-center">
+    <button class="bg-blue-600 text-white font-semibold py-2 px-6 rounded-full hover:bg-blue-700 transition-colors mb-8 nav-link" data-page="quiz-page">
+      ← Back to Quiz
+    </button>
+    <div class="bg-white rounded-3xl shadow-xl p-8 md:p-16">
+      <h1 class="text-3xl md:text-4xl font-normal text-gray-800 mb-4">Your Recommended Service Tier</h1>
+      <p class="text-lg text-gray-600 mb-8 max-w-2xl mx-auto">
+        Based on your answers, we recommend the following tier to help you achieve your goals.
+      </p>
+      <div id="recommendation-content" class="text-left bg-gray-100 p-6 rounded-2xl shadow-inner mx-auto max-w-2xl">
+        <h3 class="text-2xl font-normal text-gray-800 mb-2" id="recommendation-title"></h3>
+        <p class="text-gray-700 leading-relaxed mb-4" id="recommendation-description"></p>
+        <p class="text-gray-700 leading-relaxed font-light">
+          This tier is designed to give you a solid foundation for your business. It focuses on essential branding, a basic web presence, and foundational digital marketing to help you launch and find your first customers.
+        </p>
+      </div>
+      <a href="#consultation" class="bg-blue-600 text-white font-semibold py-4 px-8 rounded-full shadow-lg hover:bg-blue-700 transition-colors duration-300 mt-8 nav-link" data-page="consultation-page">
+        Get My Free Strategic Analysis
+      </a>
+    </div>
+  </div>
+
+  <!-- Blog Post 1: Website as a Lead Magnet -->
+  <div id="blog-post-1-page" class="page-content py-16 px-6 container mx-auto">
+    <button class="bg-blue-600 text-white font-semibold py-2 px-6 rounded-full hover:bg-blue-700 transition-colors mb-8 nav-link" data-page="blog-page">
+      ← Back to Blog
+    </button>
+    <div class="bg-white rounded-3xl shadow-xl p-8 md:p-16">
+      <h1 class="text-4xl font-normal text-gray-900 mb-6 text-center">Is Your Website a Lead Magnet or a Black Hole?</h1>
+      <p class="text-gray-600 mb-8 text-sm text-center">Published: October 26, 2023</p>
+      <div class="max-w-4xl mx-auto py-8">
+        <p class="text-gray-700 leading-relaxed text-justify mb-6">A website is more than just an online brochure—it’s your most valuable asset for attracting customers. But for many businesses, it's a "black hole" where visitors arrive and then vanish without a trace. A truly effective website is a lead magnet, designed to capture visitor attention and guide them toward a meaningful action. The difference lies in a few key areas: clear calls-to-action, a streamlined user experience, and content that speaks directly to your ideal customer’s pain points. Without these elements, your website might be a beautiful digital showcase, but it's not working for you.</p>
+        <p class="text-gray-700 leading-relaxed text-justify mb-6">A lead magnet website simplifies the journey from visitor to client. It anticipates questions, provides clear solutions, and makes it effortless for someone to get in touch or make a purchase. By focusing on conversion-driven design and persuasive copywriting, you can transform your online presence from a passive space into a dynamic engine for growth.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Blog Post 2: Social Media Empty Room -->
+  <div id="blog-post-2-page" class="page-content py-16 px-6 container mx-auto">
+    <button class="bg-blue-600 text-white font-semibold py-2 px-6 rounded-full hover:bg-blue-700 transition-colors mb-8 nav-link" data-page="blog-page">
+      ← Back to Blog
+    </button>
+    <div class="bg-white rounded-3xl shadow-xl p-8 md:p-16">
+      <h1 class="text-4xl font-normal text-gray-900 mb-6 text-center">You're Posting on Social Media, But Are You Talking to an Empty Room?</h1>
+      <p class="text-gray-600 mb-8 text-sm text-center">Published: October 26, 2023</p>
+      <div class="max-w-4xl mx-auto py-8">
+        <p class="text-gray-700 leading-relaxed text-justify mb-6">Many businesses treat social media as a one-way street, broadcasting their messages without ever listening for a response. The result? A lot of noise and very little engagement. If your posts feel like they're falling into an "empty room," it's time to rethink your strategy. Social media is about building relationships, not just racking up likes. The key is to create two-way conversations, ask questions, respond genuinely to comments, and use content that sparks a dialogue.</p>
+        <p class="text-gray-700 leading-relaxed text-justify mb-6">Building a community on social media takes time and a shift in mindset. It’s not about perfecting an algorithm; it’s about authentic human connection. By focusing on interaction over simple information delivery, you can transform your social profiles into lively hubs where customers feel seen, heard, and valued. That's how you turn a quiet room into a buzzing community.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Blog Post 3: Hidden Costs of DIY Marketing -->
+  <div id="blog-post-3-page" class="page-content py-16 px-6 container mx-auto">
+    <button class="bg-blue-600 text-white font-semibold py-2 px-6 rounded-full hover:bg-blue-700 transition-colors mb-8 nav-link" data-page="blog-page">
+      ← Back to Blog
+    </button>
+    <div class="bg-white rounded-3xl shadow-xl p-8 md:p-16">
+      <h1 class="text-4xl font-normal text-gray-900 mb-6 text-center">The Hidden Costs of DIY Marketing</h1>
+      <p class="text-gray-600 mb-8 text-sm text-center">Published: October 26, 2023</p>
+      <div class="max-w-4xl mx-auto py-8">
+        <p class="text-gray-700 leading-relaxed text-justify mb-6">For many small business owners, handling marketing in-house seems like a smart way to save money. The truth is, the "do-it-yourself" approach often comes with hidden costs that are far greater than an agency's fee. The most significant cost? Your time. Every hour you spend trying to learn SEO, design a graphic, or write a blog post is an hour you’re not spending on what truly matters: running your business. These efforts can also lead to subpar results, which can damage your brand and fail to generate a meaningful return on investment.</p>
+        <p class="text-gray-700 leading-relaxed text-justify mb-6">Hiring a professional team isn't just about outsourcing tasks; it's about gaining expertise, efficiency, and a dedicated focus on growth. The right partners can help you avoid costly trial-and-error, implement proven strategies, and free you up to do what you do best. The real value isn't just in what they do, but in the time, stress, and missed opportunities they save you.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Blog Post 4: Why Your SEO Isn't Working -->
+  <div id="blog-post-4-page" class="page-content py-16 px-6 container mx-auto">
+    <button class="bg-blue-600 text-white font-semibold py-2 px-6 rounded-full hover:bg-blue-700 transition-colors mb-8 nav-link" data-page="blog-page">
+      ← Back to Blog
+    </button>
+    <div class="bg-white rounded-3xl shadow-xl p-8 md:p-16">
+      <h1 class="text-4xl font-normal text-gray-900 mb-6 text-center">Why Your SEO Isn't Working: It's Not What You Think</h1>
+      <p class="text-gray-600 mb-8 text-sm text-center">Published: October 26, 2023</p>
+      <div class="max-w-4xl mx-auto py-8">
+        <p class="text-gray-700 leading-relaxed text-justify mb-6">Many businesses believe that SEO is just about keywords and backlinks. While those are important, they are only part of the puzzle. The real reason your SEO might be stagnant is often related to a poor user experience. Search engines now prioritize websites that are fast, mobile-friendly, and provide valuable content that keeps users on the page. If your site is slow or difficult to navigate, no amount of technical SEO will help you climb the rankings.</p>
+        <p class="text-gray-700 leading-relaxed text-justify mb-6">Effective SEO is a holistic strategy that combines technical optimization with great content and a fantastic user experience. It's about building a website that both search engines and people love. By fixing core user-focused issues, you not only improve your ranking but also create a website that actually converts visitors into customers.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Blog Post 5: Automation Is Stealing Your Time -->
+  <div id="blog-post-5-page" class="page-content py-16 px-6 container mx-auto">
+    <button class="bg-blue-600 text-white font-semibold py-2 px-6 rounded-full hover:bg-blue-700 transition-colors mb-8 nav-link" data-page="blog-page">
+      ← Back to Blog
+    </button>
+    <div class="bg-white rounded-3xl shadow-xl p-8 md:p-16">
+      <h1 class="text-4xl font-normal text-gray-900 mb-6 text-center">Automation Is Stealing Your Time (Unless You Do This)</h1>
+      <p class="text-gray-600 mb-8 text-sm text-center">Published: October 26, 2023</p>
+      <div class="max-w-4xl mx-auto py-8">
+        <p class="text-gray-700 leading-relaxed text-justify mb-6">Automation is pitched as a time-saver, but if implemented incorrectly, it can become a time sink. Many businesses get bogged down in setting up complex workflows that are not optimized for their actual processes. The result is a system that requires constant manual intervention, defeating the entire purpose of automation. The key to successful automation is a streamlined workflow, a clear understanding of your business's pain points, and simple, robust integrations that just work.</p>
+        <p class="text-gray-700 leading-relaxed text-justify mb-6">The best automation strategies start with a deep understanding of your business. Rather than trying to automate everything at once, focus on a few key, repetitive tasks that consume the most time, like lead follow-up or inventory tracking. By starting small and building on a solid foundation, you can create a system that truly saves you time, allowing you to focus on strategic growth.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Blog Post 6: Your Competitors Are Using AI -->
+  <div id="blog-post-6-page" class="page-content py-16 px-6 container mx-auto">
+    <button class="bg-blue-600 text-white font-semibold py-2 px-6 rounded-full hover:bg-blue-700 transition-colors mb-8 nav-link" data-page="blog-page">
+      ← Back to Blog
+    </button>
+    <div class="bg-white rounded-3xl shadow-xl p-8 md:p-16">
+      <h1 class="text-4xl font-normal text-gray-900 mb-6 text-center">Your Competitors Are Using AI. Are You Falling Behind?</h1>
+      <p class="text-gray-600 mb-8 text-sm text-center">Published: October 26, 2023</p>
+      <div class="max-w-4xl mx-auto py-8">
+        <p class="text-gray-700 leading-relaxed text-justify mb-6">In today's fast-paced market, businesses that fail to adapt quickly fall behind. AI is no longer a futuristic concept—it's a tool that your competitors are already using to gain a competitive edge. From automating customer service and generating content to providing powerful data analytics, AI can streamline operations and help you make smarter decisions. If you aren't exploring how AI can help your business, you risk losing ground to those who are.</p>
+        <p class="text-gray-700 leading-relaxed text-justify mb-6">The good news is that implementing AI doesn't have to be complex or expensive. Many entry-level tools and services are available that can provide immediate value without a major overhaul. The key is to start small, identify a single pain point, and use AI to solve it. By taking a proactive approach, you can transform a potential threat into your biggest competitive advantage.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Privacy Policy Page -->
+  <div id="privacy-page" class="page-content py-16 px-6 container mx-auto">
+    <button class="bg-blue-600 text-white font-semibold py-2 px-6 rounded-full hover:bg-blue-700 transition-colors mb-8 nav-link" data-page="home-page">
+      ← Back to Home
+    </button>
+    <h1 class="text-4xl font-normal text-center text-gray-900 mb-6">Privacy Policy</h1>
+    <div class="max-w-4xl mx-auto py-8">
+      <p class="text-gray-700 leading-relaxed text-justify mb-6"><strong>Last Updated: October 26, 2023</strong></p>
+      <p class="text-gray-700 leading-relaxed text-justify mb-6">This Privacy Policy describes how Auctora Consulting ("we," "us," or "our") handles personal information we collect from you when you visit our website, use our services, or interact with our digital tools.</p>
+      <h2 class="text-2xl font-normal mt-8 mb-4 text-gray-800">1. Information We Collect</h2>
+      <p class="text-gray-700 leading-relaxed text-justify mb-2">We may collect the following types of information:</p>
+      <ul class="list-disc list-inside space-y-2 text-gray-700">
+        <li><strong>Contact Information:</strong> When you use our contact forms, we collect your name, email address, phone number, and any other information you provide.</li>
+        <li><strong>Usage Data:</strong> We automatically collect information about how you interact with our site, suchs as pages visited, time spent, and browser type. This helps us improve our website and services.</li>
+        <li><strong>Third-Party Integrations:</strong> When you use our AI Strategist tool, your input is sent to the Gemini API to generate a response. Your data is not stored or associated with your identity by us.</li>
+        <li><strong>Cookies and Tracking:</strong> We use cookies to enhance your experience, analyze site usage, and personalize content. You can manage your cookie preferences through your browser settings.</li>
+      </ul>
+      <h2 class="text-2xl font-normal mt-8 mb-4 text-gray-800">2. How We Use Your Information</h2>
+      <p class="text-gray-700 leading-relaxed text-justify mb-2">We use the collected information to:</p>
+      <ul class="list-disc list-inside space-y-2 text-gray-700">
+        <li>Provide, operate, and maintain our website and services.</li>
+        <li>Communicate with you, respond to inquiries, and provide customer support.</li>
+        <li>Process and fulfill your requests for our services.</li>
+        <li>Improve our website, services, and marketing efforts.</li>
+        <li>Ensure the security and integrity of our systems.</li>
+      </ul>
+      <h2 class="text-2xl font-normal mt-8 mb-4 text-gray-800">3. Data Sharing and Disclosure</h2>
+      <p class="text-gray-700 leading-relaxed text-justify mb-2">We do not sell your personal information. We may share your information with:</p>
+      <ul class="list-disc list-inside space-y-2 text-gray-700">
+        <li><strong>Service Providers:</strong> We use third-party services (e.g., web hosting, API providers) to assist with our operations. These providers are obligated to protect your information.</li>
+        <li><strong>Legal Compliance:</strong> We may disclose information if required by law or to protect our rights, property, or safety.</li>
+      </ul>
+      <h2 class="text-2xl font-normal mt-8 mb-4 text-gray-800">5. Changes to This Policy</h2>
+      <p class="text-gray-700 leading-relaxed text-justify mb-6">We may update this Privacy Policy from time to time. We will notify you of any changes by posting the new policy on this page and updating the "Last Updated" date.</p>
+    </div>
+  </div>
+
+  <!-- Terms and Conditions Page -->
+  <div id="terms-page" class="page-content py-16 px-6 container mx-auto">
+    <button class="bg-blue-600 text-white font-semibold py-2 px-6 rounded-full hover:bg-blue-700 transition-colors mb-8 nav-link" data-page="home-page">
+      ← Back to Home
+    </button>
+    <h1 class="text-4xl font-normal text-center text-gray-900 mb-6">Terms & Conditions</h1>
+    <div class="max-w-4xl mx-auto py-8">
+      <p class="text-gray-700 leading-relaxed text-justify mb-6"><strong>Last Updated: October 26, 2023</strong></p>
+      <h2 class="text-2xl font-normal mt-8 mb-4 text-gray-800">1. Acceptance of Terms</h2>
+      <p class="text-gray-700 leading-relaxed text-justify mb-6">By accessing and using this website, you accept and agree to be bound by the terms and provisions of this agreement. If you do not agree to abide by the above, please do not use this service.</p>
+      <h2 class="text-2xl font-normal mt-8 mb-4 text-gray-800">2. Services Offered</h2>
+      <p class="text-gray-700 leading-relaxed text-justify mb-6">Auctora Consulting provides a range of digital solutions, including branding, web development, marketing, and IT support. All services are subject to a separate service agreement that outlines specific deliverables, timelines, and costs.</p>
+      <h2 class="text-2xl font-normal mt-8 mb-4 text-gray-800">3. Use of the Website</h2>
+      <p class="text-gray-700 leading-relaxed text-justify mb-6">You agree to use the website and its services only for lawful purposes. You are prohibited from using the site to engage in any activity that is harmful, illegal, or infringes on the rights of others.</p>
+      <h2 class="text-2xl font-normal mt-8 mb-4 text-gray-800">4. Intellectual Property</h2>
+      <p class="text-gray-700 leading-relaxed text-justify mb-6">All content on this website, including text, graphics, logos, and software, is the property of Auctora Consulting or its content suppliers and is protected by intellectual property laws. You may not reproduce, distribute, or create derivative works from this content without our express written permission.</p>
+      <h2 class="text-2xl font-normal mt-8 mb-4 text-gray-800">5. Disclaimer of Warranties</h2>
+      <p class="text-gray-700 leading-relaxed text-justify mb-6">The information and services on this website are provided "as is" without any warranties, express or implied. We do not guarantee that the site will be error-free or that it will meet your specific needs.</p>
+      <h2 class="text-2xl font-normal mt-8 mb-4 text-gray-800">6. Limitation of Liability</h2>
+      <p class="text-gray-700 leading-relaxed text-justify mb-6">Auctora Consulting will not be liable for any direct, indirect, incidental, or consequential damages resulting from the use or inability to use this website or its services.</p>
+      <h2 class="text-2xl font-normal mt-8 mb-4 text-gray-800">7. Governing Law</h2>
+      <p class="text-gray-700 leading-relaxed text-justify mb-6">This agreement is governed by and construed in accordance with the laws of the state of Texas, and you submit to the exclusive jurisdiction of the state and federal courts located in Texas for the resolution of any disputes.</p>
+    </div>
+  </div>
+
+  <!-- Consultation Page -->
+  <div id="consultation-page" class="page-content py-16 px-6 container mx-auto">
+    <button class="bg-blue-600 text-white font-semibold py-2 px-6 rounded-full hover:bg-blue-700 transition-colors mb-8 nav-link" data-page="home-page">
+      ← Back to Home
+    </button>
+    <div class="bg-white rounded-3xl shadow-xl p-8 md:p-16 text-center">
+      <h1 class="text-3xl md:text-4xl font-normal text-gray-800 mb-4">Book Your Free Consultation</h1>
+      <p class="text-lg text-gray-600 mb-8 max-w-2xl mx-auto">
+        Please fill out the form below to schedule a time to discuss your business needs. We'll find a time that works for you.
+      </p>
+      <form id="consultation-form" class="flex flex-col items-center w-full max-w-2xl mx-auto gap-6">
+        <div class="w-full flex flex-col sm:flex-row gap-4">
+          <input type="text" id="consultation-name" placeholder="Your Name" required
+            class="w-full p-4 rounded-full border-2 border-gray-300 bg-gray-50 text-gray-800 placeholder-gray-400 focus:outline-none focus:border-blue-500 transition-colors">
+          <input type="email" id="consultation-email" placeholder="Your Email" required
+            class="w-full p-4 rounded-full border-2 border-gray-300 bg-gray-50 text-gray-800 placeholder-gray-400 focus:outline-none focus:border-blue-500 transition-colors">
+        </div>
+        <div class="w-full">
+          <label for="consultation-date" class="block text-left text-gray-600 mb-2">
+            Select a Preferred Date
+          </label>
+          <input type="date" id="consultation-date" required
+            class="w-full p-4 rounded-full border-2 border-gray-300 bg-gray-50 text-gray-800 focus:outline-none focus:border-blue-500 transition-colors">
+        </div>
+        <textarea id="consultation-message" placeholder="Briefly describe your business and what you'd like to discuss."
+          class="w-full p-4 rounded-2xl border-2 border-gray-300 bg-gray-50 text-gray-800 focus:outline-none focus:border-blue-500 transition-colors" rows="5"></textarea>
+        <button type="submit"
+          class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-4 px-8 rounded-full transition duration-300 transform hover:scale-105">
+          Schedule Consultation
+        </button>
+      </form>
+      <div id="consultation-message-box" class="mt-8 text-left bg-gray-100 p-6 rounded-2xl shadow-inner hidden">
+        <p class="text-gray-700 leading-relaxed"></p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Quiz Page -->
+  <div id="quiz-page" class="page-content py-16 px-6 container mx-auto">
+    <button class="bg-blue-600 text-white font-semibold py-2 px-6 rounded-full hover:bg-blue-700 transition-colors mb-8 nav-link" data-page="blog-page">
+      ← Back to Blog
+    </button>
+    <div class="bg-white rounded-3xl shadow-xl p-8 md:p-16 text-center">
+      <h1 class="text-3xl md:text-4xl font-normal text-gray-800 mb-4">Find Your Perfect Service Tier</h1>
+      <p class="text-lg text-gray-600 mb-8 max-w-2xl mx-auto">
+        Answer these quick questions to get a personalized recommendation for your business.
+      </p>
+      
+      <div id="quiz-questions">
+        <!-- Question 1 -->
+        <div id="question-1" class="quiz-question text-left mb-8">
+          <h3 class="text-xl font-normal text-gray-800 mb-4">1. What is your current business goal?</h3>
+          <ul class="space-y-4">
+            <li>
+              <button class="quiz-answer w-full p-4 rounded-xl text-left hover:bg-gray-100 transition-colors" data-points="1">
+                A. Launching my first business or project.
+              </button>
+            </li>
+            <li>
+              <button class="quiz-answer w-full p-4 rounded-xl text-left hover:bg-gray-100 transition-colors" data-points="2">
+                B. Scaling my existing customer base and revenue.
+              </button>
+            </li>
+            <li>
+              <button class="quiz-answer w-full p-4 rounded-xl text-left hover:bg-gray-100 transition-colors" data-points="3">
+                C. Dominating my market and maximizing long-term growth.
+              </button>
+            </li>
+          </ul>
+        </div>
+        <!-- Question 2 -->
+        <div id="question-2" class="quiz-question text-left hidden mb-8">
+          <h3 class="text-xl font-normal text-gray-800 mb-4">2. What is your biggest digital marketing challenge?</h3>
+          <ul class="space-y-4">
+            <li>
+              <button class="quiz-answer w-full p-4 rounded-xl text-left hover:bg-gray-100 transition-colors" data-points="1">
+                A. I need a professional website and a basic online presence.
+              </button>
+            </li>
+            <li>
+              <button class="quiz-answer w-full p-4 rounded-xl text-left hover:bg-gray-100 transition-colors" data-points="2">
+                B. I need to improve my SEO and social media engagement.
+              </button>
+            </li>
+            <li>
+              <button class="quiz-answer w-full p-4 rounded-xl text-left hover:bg-gray-100 transition-colors" data-points="3">
+                C. I need advanced automation and a comprehensive content strategy.
+              </button>
+            </li>
+          </ul>
+        </div>
+        <!-- Question 3 -->
+        <div id="question-3" class="quiz-question text-left hidden mb-8">
+          <h3 class="text-xl font-normal text-gray-800 mb-4">3. What is your current team size and structure?</h3>
+          <ul class="space-y-4">
+            <li>
+              <button class="quiz-answer w-full p-4 rounded-xl text-left hover:bg-gray-100 transition-colors" data-points="1">
+                A. It's just me, or a very small team. I need external support.
+              </button>
+            </li>
+            <li>
+              <button class="quiz-answer w-full p-4 rounded-xl text-left hover:bg-gray-100 transition-colors" data-points="2">
+                B. We have a small team but need to scale our operations efficiently.
+              </button>
+            </li>
+            <li>
+              <button class="quiz-answer w-full p-4 rounded-xl text-left hover:bg-gray-100 transition-colors" data-points="3">
+                C. We have an established team and need specialized, high-level support.
+              </button>
+            </li>
+          </ul>
+        </div>
+        
+        <button id="next-quiz-btn" class="bg-blue-600 text-white font-semibold py-4 px-8 rounded-full hover:bg-blue-700 transition duration-300 transform hover:scale-105 mt-8">
+          Next Question
+        </button>
+        <div id="quiz-warning" class="text-red-500 mt-4 hidden">Please select an answer to continue.</div>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Quiz Results Page -->
+  <div id="quiz-results-page" class="page-content py-16 px-6 container mx-auto text-center">
+    <button class="bg-blue-600 text-white font-semibold py-2 px-6 rounded-full hover:bg-blue-700 transition-colors mb-8 nav-link" data-page="quiz-page">
+      ← Back to Quiz
+    </button>
+    <div class="bg-white rounded-3xl shadow-xl p-8 md:p-16">
+      <h1 class="text-3xl md:text-4xl font-normal text-gray-800 mb-4">Your Recommended Service Tier</h1>
+      <p class="text-lg text-gray-600 mb-8 max-w-2xl mx-auto">
+        Based on your answers, we recommend the following tier to help you achieve your goals.
+      </p>
+      <div id="recommendation-content" class="text-left bg-gray-100 p-6 rounded-2xl shadow-inner mx-auto max-w-2xl">
+        <h3 class="text-2xl font-normal text-gray-800 mb-2" id="recommendation-title"></h3>
+        <p class="text-gray-700 leading-relaxed mb-4" id="recommendation-description"></p>
+        <p class="text-gray-700 leading-relaxed font-light">
+          This tier is designed to give you a solid foundation for your business. It focuses on essential branding, a basic web presence, and foundational digital marketing to help you launch and find your first customers.
+        </p>
+      </div>
+      <a href="#consultation" class="bg-blue-600 text-white font-semibold py-4 px-8 rounded-full shadow-lg hover:bg-blue-700 transition-colors duration-300 mt-8 nav-link" data-page="consultation-page">
+        Get My Free Strategic Analysis
+      </a>
+    </div>
+  </div>
+
+  <!-- Blog Post 1: Website as a Lead Magnet -->
+  <div id="blog-post-1-page" class="page-content py-16 px-6 container mx-auto">
+    <button class="bg-blue-600 text-white font-semibold py-2 px-6 rounded-full hover:bg-blue-700 transition-colors mb-8 nav-link" data-page="blog-page">
+      ← Back to Blog
+    </button>
+    <div class="bg-white rounded-3xl shadow-xl p-8 md:p-16">
+      <h1 class="text-4xl font-normal text-gray-900 mb-6 text-center">Is Your Website a Lead Magnet or a Black Hole?</h1>
+      <p class="text-gray-600 mb-8 text-sm text-center">Published: October 26, 2023</p>
+      <div class="max-w-4xl mx-auto py-8">
+        <p class="text-gray-700 leading-relaxed text-justify mb-6">A website is more than just an online brochure—it’s your most valuable asset for attracting customers. But for many businesses, it's a "black hole" where visitors arrive and then vanish without a trace. A truly effective website is a lead magnet, designed to capture visitor attention and guide them toward a meaningful action. The difference lies in a few key areas: clear calls-to-action, a streamlined user experience, and content that speaks directly to your ideal customer’s pain points. Without these elements, your website might be a beautiful digital showcase, but it's not working for you.</p>
+        <p class="text-gray-700 leading-relaxed text-justify mb-6">A lead magnet website simplifies the journey from visitor to client. It anticipates questions, provides clear solutions, and makes it effortless for someone to get in touch or make a purchase. By focusing on conversion-driven design and persuasive copywriting, you can transform your online presence from a passive space into a dynamic engine for growth.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Blog Post 2: Social Media Empty Room -->
+  <div id="blog-post-2-page" class="page-content py-16 px-6 container mx-auto">
+    <button class="bg-blue-600 text-white font-semibold py-2 px-6 rounded-full hover:bg-blue-700 transition-colors mb-8 nav-link" data-page="blog-page">
+      ← Back to Blog
+    </button>
+    <div class="bg-white rounded-3xl shadow-xl p-8 md:p-16">
+      <h1 class="text-4xl font-normal text-gray-900 mb-6 text-center">You're Posting on Social Media, But Are You Talking to an Empty Room?</h1>
+      <p class="text-gray-600 mb-8 text-sm text-center">Published: October 26, 2023</p>
+      <div class="max-w-4xl mx-auto py-8">
+        <p class="text-gray-700 leading-relaxed text-justify mb-6">Many businesses treat social media as a one-way street, broadcasting their messages without ever listening for a response. The result? A lot of noise and very little engagement. If your posts feel like they're falling into an "empty room," it's time to rethink your strategy. Social media is about building relationships, not just racking up likes. The key is to create two-way conversations, ask questions, respond genuinely to comments, and use content that sparks a dialogue.</p>
+        <p class="text-gray-700 leading-relaxed text-justify mb-6">Building a community on social media takes time and a shift in mindset. It’s not about perfecting an algorithm; it’s about authentic human connection. By focusing on interaction over simple information delivery, you can transform your social profiles into lively hubs where customers feel seen, heard, and valued. That's how you turn a quiet room into a buzzing community.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Blog Post 3: Hidden Costs of DIY Marketing -->
+  <div id="blog-post-3-page" class="page-content py-16 px-6 container mx-auto">
+    <button class="bg-blue-600 text-white font-semibold py-2 px-6 rounded-full hover:bg-blue-700 transition-colors mb-8 nav-link" data-page="blog-page">
+      ← Back to Blog
+    </button>
+    <div class="bg-white rounded-3xl shadow-xl p-8 md:p-16">
+      <h1 class="text-4xl font-normal text-gray-900 mb-6 text-center">The Hidden Costs of DIY Marketing</h1>
+      <p class="text-gray-600 mb-8 text-sm text-center">Published: October 26, 2023</p>
+      <div class="max-w-4xl mx-auto py-8">
+        <p class="text-gray-700 leading-relaxed text-justify mb-6">For many small business owners, handling marketing in-house seems like a smart way to save money. The truth is, the "do-it-yourself" approach often comes with hidden costs that are far greater than an agency's fee. The most significant cost? Your time. Every hour you spend trying to learn SEO, design a graphic, or write a blog post is an hour you’re not spending on what truly matters: running your business. These efforts can also lead to subpar results, which can damage your brand and fail to generate a meaningful return on investment.</p>
+        <p class="text-gray-700 leading-relaxed text-justify mb-6">Hiring a professional team isn't just about outsourcing tasks; it's about gaining expertise, efficiency, and a dedicated focus on growth. The right partners can help you avoid costly trial-and-error, implement proven strategies, and free you up to do what you do best. The real value isn't just in what they do, but in the time, stress, and missed opportunities they save you.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Blog Post 4: Why Your SEO Isn't Working -->
+  <div id="blog-post-4-page" class="page-content py-16 px-6 container mx-auto">
+    <button class="bg-blue-600 text-white font-semibold py-2 px-6 rounded-full hover:bg-blue-700 transition-colors mb-8 nav-link" data-page="blog-page">
+      ← Back to Blog
+    </button>
+    <div class="bg-white rounded-3xl shadow-xl p-8 md:p-16">
+      <h1 class="text-4xl font-normal text-gray-900 mb-6 text-center">Why Your SEO Isn't Working: It's Not What You Think</h1>
+      <p class="text-gray-600 mb-8 text-sm text-center">Published: October 26, 2023</p>
+      <div class="max-w-4xl mx-auto py-8">
+        <p class="text-gray-700 leading-relaxed text-justify mb-6">Many businesses believe that SEO is just about keywords and backlinks. While those are important, they are only part of the puzzle. The real reason your SEO might be stagnant is often related to a poor user experience. Search engines now prioritize websites that are fast, mobile-friendly, and provide valuable content that keeps users on the page. If your site is slow or difficult to navigate, no amount of technical SEO will help you climb the rankings.</p>
+        <p class="text-gray-700 leading-relaxed text-justify mb-6">Effective SEO is a holistic strategy that combines technical optimization with great content and a fantastic user experience. It's about building a website that both search engines and people love. By fixing core user-focused issues, you not only improve your ranking but also create a website that actually converts visitors into customers.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Blog Post 5: Automation Is Stealing Your Time -->
+  <div id="blog-post-5-page" class="page-content py-16 px-6 container mx-auto">
+    <button class="bg-blue-600 text-white font-semibold py-2 px-6 rounded-full hover:bg-blue-700 transition-colors mb-8 nav-link" data-page="blog-page">
+      ← Back to Blog
+    </button>
+    <div class="bg-white rounded-3xl shadow-xl p-8 md:p-16">
+      <h1 class="text-4xl font-normal text-gray-900 mb-6 text-center">Automation Is Stealing Your Time (Unless You Do This)</h1>
+      <p class="text-gray-600 mb-8 text-sm text-center">Published: October 26, 2023</p>
+      <div class="max-w-4xl mx-auto py-8">
+        <p class="text-gray-700 leading-relaxed text-justify mb-6">Automation is pitched as a time-saver, but if implemented incorrectly, it can become a time sink. Many businesses get bogged down in setting up complex workflows that are not optimized for their actual processes. The result is a system that requires constant manual intervention, defeating the entire purpose of automation. The key to successful automation is a streamlined workflow, a clear understanding of your business's pain points, and simple, robust integrations that just work.</p>
+        <p class="text-gray-700 leading-relaxed text-justify mb-6">The best automation strategies start with a deep understanding of your business. Rather than trying to automate everything at once, focus on a few key, repetitive tasks that consume the most time, like lead follow-up or inventory tracking. By starting small and building on a solid foundation, you can create a system that truly saves you time, allowing you to focus on strategic growth.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Blog Post 6: Your Competitors Are Using AI -->
+  <div id="blog-post-6-page" class="page-content py-16 px-6 container mx-auto">
+    <button class="bg-blue-600 text-white font-semibold py-2 px-6 rounded-full hover:bg-blue-700 transition-colors mb-8 nav-link" data-page="blog-page">
+      ← Back to Blog
+    </button>
+    <div class="bg-white rounded-3xl shadow-xl p-8 md:p-16">
+      <h1 class="text-4xl font-normal text-gray-900 mb-6 text-center">Your Competitors Are Using AI. Are You Falling Behind?</h1>
+      <p class="text-gray-600 mb-8 text-sm text-center">Published: October 26, 2023</p>
+      <div class="max-w-4xl mx-auto py-8">
+        <p class="text-gray-700 leading-relaxed text-justify mb-6">In today's fast-paced market, businesses that fail to adapt quickly fall behind. AI is no longer a futuristic concept—it's a tool that your competitors are already using to gain a competitive edge. From automating customer service and generating content to providing powerful data analytics, AI can streamline operations and help you make smarter decisions. If you aren't exploring how AI can help your business, you risk losing ground to those who are.</p>
+        <p class="text-gray-700 leading-relaxed text-justify mb-6">The good news is that implementing AI doesn't have to be complex or expensive. Many entry-level tools and services are available that can provide immediate value without a major overhaul. The key is to start small, identify a single pain point, and use AI to solve it. By taking a proactive approach, you can transform a potential threat into your biggest competitive advantage.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Privacy Policy Page -->
+  <div id="privacy-page" class="page-content py-16 px-6 container mx-auto">
+    <button class="bg-blue-600 text-white font-semibold py-2 px-6 rounded-full hover:bg-blue-700 transition-colors mb-8 nav-link" data-page="home-page">
+      ← Back to Home
+    </button>
+    <h1 class="text-4xl font-normal text-center text-gray-900 mb-6">Privacy Policy</h1>
+    <div class="max-w-4xl mx-auto py-8">
+      <p class="text-gray-700 leading-relaxed text-justify mb-6"><strong>Last Updated: October 26, 2023</strong></p>
+      <p class="text-gray-700 leading-relaxed text-justify mb-6">This Privacy Policy describes how Auctora Consulting ("we," "us," or "our") handles personal information we collect from you when you visit our website, use our services, or interact with our digital tools.</p>
+      <h2 class="text-2xl font-normal mt-8 mb-4 text-gray-800">1. Information We Collect</h2>
+      <p class="text-gray-700 leading-relaxed text-justify mb-2">We may collect the following types of information:</p>
+      <ul class="list-disc list-inside space-y-2 text-gray-700">
+        <li><strong>Contact Information:</strong> When you use our contact forms, we collect your name, email address, phone number, and any other information you provide.</li>
+        <li><strong>Usage Data:</strong> We automatically collect information about how you interact with our site, suchs as pages visited, time spent, and browser type. This helps us improve our website and services.</li>
+        <li><strong>Third-Party Integrations:</strong> When you use our AI Strategist tool, your input is sent to the Gemini API to generate a response. Your data is not stored or associated with your identity by us.</li>
+        <li><strong>Cookies and Tracking:</strong> We use cookies to enhance your experience, analyze site usage, and personalize content. You can manage your cookie preferences through your browser settings.</li>
+      </ul>
+      <h2 class="text-2xl font-normal mt-8 mb-4 text-gray-800">2. How We Use Your Information</h2>
+      <p class="text-gray-700 leading-relaxed text-justify mb-2">We use the collected information to:</p>
+      <ul class="list-disc list-inside space-y-2 text-gray-700">
+        <li>Provide, operate, and maintain our website and services.</li>
+        <li>Communicate with you, respond to inquiries, and provide customer support.</li>
+        <li>Process and fulfill your requests for our services.</li>
+        <li>Improve our website, services, and marketing efforts.</li>
+        <li>Ensure the security and integrity of our systems.</li>
+      </ul>
+      <h2 class="text-2xl font-normal mt-8 mb-4 text-gray-800">3. Data Sharing and Disclosure</h2>
+      <p class="text-gray-700 leading-relaxed text-justify mb-2">We do not sell your personal information. We may share your information with:</p>
+      <ul class="list-disc list-inside space-y-2 text-gray-700">
+        <li><strong>Service Providers:</strong> We use third-party services (e.g., web hosting, API providers) to assist with our operations. These providers are obligated to protect your information.</li>
+        <li><strong>Legal Compliance:</strong> We may disclose information if required by law or to protect our rights, property, or safety.</li>
+      </ul>
+      <h2 class="text-2xl font-normal mt-8 mb-4 text-gray-800">5. Changes to This Policy</h2>
+      <p class="text-gray-700 leading-relaxed text-justify mb-6">We may update this Privacy Policy from time to time. We will notify you of any changes by posting the new policy on this page and updating the "Last Updated" date.</p>
+    </div>
+  </div>
+
+  <!-- Terms and Conditions Page -->
+  <div id="terms-page" class="page-content py-16 px-6 container mx-auto">
+    <button class="bg-blue-600 text-white font-semibold py-2 px-6 rounded-full hover:bg-blue-700 transition-colors mb-8 nav-link" data-page="home-page">
+      ← Back to Home
+    </button>
+    <h1 class="text-4xl font-normal text-center text-gray-900 mb-6">Terms & Conditions</h1>
+    <div class="max-w-4xl mx-auto py-8">
+      <p class="text-gray-700 leading-relaxed text-justify mb-6"><strong>Last Updated: October 26, 2023</strong></p>
+      <h2 class="text-2xl font-normal mt-8 mb-4 text-gray-800">1. Acceptance of Terms</h2>
+      <p class="text-gray-700 leading-relaxed text-justify mb-6">By accessing and using this website, you accept and agree to be bound by the terms and provisions of this agreement. If you do not agree to abide by the above, please do not use this service.</p>
+      <h2 class="text-2xl font-normal mt-8 mb-4 text-gray-800">2. Services Offered</h2>
+      <p class="text-gray-700 leading-relaxed text-justify mb-6">Auctora Consulting provides a range of digital solutions, including branding, web development, marketing, and IT support. All services are subject to a separate service agreement that outlines specific deliverables, timelines, and costs.</p>
+      <h2 class="text-2xl font-normal mt-8 mb-4 text-gray-800">3. Use of the Website</h2>
+      <p class="text-gray-700 leading-relaxed text-justify mb-6">You agree to use the website and its services only for lawful purposes. You are prohibited from using the site to engage in any activity that is harmful, illegal, or infringes on the rights of others.</p>
+      <h2 class="text-2xl font-normal mt-8 mb-4 text-gray-800">4. Intellectual Property</h2>
+      <p class="text-gray-700 leading-relaxed text-justify mb-6">All content on this website, including text, graphics, logos, and software, is the property of Auctora Consulting or its content suppliers and is protected by intellectual property laws. You may not reproduce, distribute, or create derivative works from this content without our express written permission.</p>
+      <h2 class="text-2xl font-normal mt-8 mb-4 text-gray-800">5. Disclaimer of Warranties</h2>
+      <p class="text-gray-700 leading-relaxed text-justify mb-6">The information and services on this website are provided "as is" without any warranties, express or implied. We do not guarantee that the site will be error-free or that it will meet your specific needs.</p>
+      <h2 class="text-2xl font-normal mt-8 mb-4 text-gray-800">6. Limitation of Liability</h2>
+      <p class="text-gray-700 leading-relaxed text-justify mb-6">Auctora Consulting will not be liable for any direct, indirect, incidental, or consequential damages resulting from the use or inability to use this website or its services.</p>
+      <h2 class="text-2xl font-normal mt-8 mb-4 text-gray-800">7. Governing Law</h2>
+      <p class="text-gray-700 leading-relaxed text-justify mb-6">This agreement is governed by and construed in accordance with the laws of the state of Texas, and you submit to the exclusive jurisdiction of the state and federal courts located in Texas for the resolution of any disputes.</p>
+    </div>
+  </div>
+
+  <!-- Consultation Page -->
+  <div id="consultation-page" class="page-content py-16 px-6 container mx-auto">
+    <button class="bg-blue-600 text-white font-semibold py-2 px-6 rounded-full hover:bg-blue-700 transition-colors mb-8 nav-link" data-page="home-page">
+      ← Back to Home
+    </button>
+    <div class="bg-white rounded-3xl shadow-xl p-8 md:p-16 text-center">
+      <h1 class="text-3xl md:text-4xl font-normal text-gray-800 mb-4">Book Your Free Consultation</h1>
+      <p class="text-lg text-gray-600 mb-8 max-w-2xl mx-auto">
+        Please fill out the form below to schedule a time to discuss your business needs. We'll find a time that works for you.
+      </p>
+      <form id="consultation-form" class="flex flex-col items-center w-full max-w-2xl mx-auto gap-6">
+        <div class="w-full flex flex-col sm:flex-row gap-4">
+          <input type="text" id="consultation-name" placeholder="Your Name" required
+            class="w-full p-4 rounded-full border-2 border-gray-300 bg-gray-50 text-gray-800 placeholder-gray-400 focus:outline-none focus:border-blue-500 transition-colors">
+          <input type="email" id="consultation-email" placeholder="Your Email" required
+            class="w-full p-4 rounded-full border-2 border-gray-300 bg-gray-50 text-gray-800 placeholder-gray-400 focus:outline-none focus:border-blue-500 transition-colors">
+        </div>
+        <div class="w-full">
+          <label for="consultation-date" class="block text-left text-gray-600 mb-2">
+            Select a Preferred Date
+          </label>
+          <input type="date" id="consultation-date" required
+            class="w-full p-4 rounded-full border-2 border-gray-300 bg-gray-50 text-gray-800 focus:outline-none focus:border-blue-500 transition-colors">
+        </div>
+        <textarea id="consultation-message" placeholder="Briefly describe your business and what you'd like to discuss."
+          class="w-full p-4 rounded-2xl border-2 border-gray-300 bg-gray-50 text-gray-800 focus:outline-none focus:border-blue-500 transition-colors" rows="5"></textarea>
+        <button type="submit"
+          class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-4 px-8 rounded-full transition duration-300 transform hover:scale-105">
+          Schedule Consultation
+        </button>
+      </form>
+      <div id="consultation-message-box" class="mt-8 text-left bg-gray-100 p-6 rounded-2xl shadow-inner hidden">
+        <p class="text-gray-700 leading-relaxed"></p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Quiz Page -->
+  <div id="quiz-page" class="page-content py-16 px-6 container mx-auto">
+    <button class="bg-blue-600 text-white font-semibold py-2 px-6 rounded-full hover:bg-blue-700 transition-colors mb-8 nav-link" data-page="blog-page">
+      ← Back to Blog
+    </button>
+    <div class="bg-white rounded-3xl shadow-xl p-8 md:p-16 text-center">
+      <h1 class="text-3xl md:text-4xl font-normal text-gray-800 mb-4">Find Your Perfect Service Tier</h1>
+      <p class="text-lg text-gray-600 mb-8 max-w-2xl mx-auto">
+        Answer these quick questions to get a personalized recommendation for your business.
+      </p>
+      
+      <div id="quiz-questions">
+        <!-- Question 1 -->
+        <div id="question-1" class="quiz-question text-left mb-8">
+          <h3 class="text-xl font-normal text-gray-800 mb-4">1. What is your current business goal?</h3>
+          <ul class="space-y-4">
+            <li>
+              <button class="quiz-answer w-full p-4 rounded-xl text-left hover:bg-gray-100 transition-colors" data-points="1">
+                A. Launching my first business or project.
+              </button>
+            </li>
+            <li>
+              <button class="quiz-answer w-full p-4 rounded-xl text-left hover:bg-gray-100 transition-colors" data-points="2">
+                B. Scaling my existing customer base and revenue.
+              </button>
+            </li>
+            <li>
+              <button class="quiz-answer w-full p-4 rounded-xl text-left hover:bg-gray-100 transition-colors" data-points="3">
+                C. Dominating my market and maximizing long-term growth.
+              </button>
+            </li>
+          </ul>
+        </div>
+        <!-- Question 2 -->
+        <div id="question-2" class="quiz-question text-left hidden mb-8">
+          <h3 class="text-xl font-normal text-gray-800 mb-4">2. What is your biggest digital marketing challenge?</h3>
+          <ul class="space-y-4">
+            <li>
+              <button class="quiz-answer w-full p-4 rounded-xl text-left hover:bg-gray-100 transition-colors" data-points="1">
+                A. I need a professional website and a basic online presence.
+              </button>
+            </li>
+            <li>
+              <button class="quiz-answer w-full p-4 rounded-xl text-left hover:bg-gray-100 transition-colors" data-points="2">
+                B. I need to improve my SEO and social media engagement.
+              </button>
+            </li>
+            <li>
+              <button class="quiz-answer w-full p-4 rounded-xl text-left hover:bg-gray-100 transition-colors" data-points="3">
+                C. I need advanced automation and a comprehensive content strategy.
+              </button>
+            </li>
+          </ul>
+        </div>
+        <!-- Question 3 -->
+        <div id="question-3" class="quiz-question text-left hidden mb-8">
+          <h3 class="text-xl font-normal text-gray-800 mb-4">3. What is your current team size and structure?</h3>
+          <ul class="space-y-4">
+            <li>
+              <button class="quiz-answer w-full p-4 rounded-xl text-left hover:bg-gray-100 transition-colors" data-points="1">
+                A. It's just me, or a very small team. I need external support.
+              </button>
+            </li>
+            <li>
+              <button class="quiz-answer w-full p-4 rounded-xl text-left hover:bg-gray-100 transition-colors" data-points="2">
+                B. We have a small team but need to scale our operations efficiently.
+              </button>
+            </li>
+            <li>
+              <button class="quiz-answer w-full p-4 rounded-xl text-left hover:bg-gray-100 transition-colors" data-points="3">
+                C. We have an established team and need specialized, high-level support.
+              </button>
+            </li>
+          </ul>
+        </div>
+        
+        <button id="next-quiz-btn" class="bg-blue-600 text-white font-semibold py-4 px-8 rounded-full hover:bg-blue-700 transition duration-300 transform hover:scale-105 mt-8">
+          Next Question
+        </button>
+        <div id="quiz-warning" class="text-red-500 mt-4 hidden">Please select an answer to continue.</div>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Quiz Results Page -->
+  <div id="quiz-results-page" class="page-content py-16 px-6 container mx-auto text-center">
+    <button class="bg-blue-600 text-white font-semibold py-2 px-6 rounded-full hover:bg-blue-700 transition-colors mb-8 nav-link" data-page="quiz-page">
+      ← Back to Quiz
+    </button>
+    <div class="bg-white rounded-3xl shadow-xl p-8 md:p-16">
+      <h1 class="text-3xl md:text-4xl font-normal text-gray-800 mb-4">Your Recommended Service Tier</h1>
+      <p class="text-lg text-gray-600 mb-8 max-w-2xl mx-auto">
+        Based on your answers, we recommend the following tier to help you achieve your goals.
+      </p>
+      <div id="recommendation-content" class="text-left bg-gray-100 p-6 rounded-2xl shadow-inner mx-auto max-w-2xl">
+        <h3 class="text-2xl font-normal text-gray-800 mb-2" id="recommendation-title"></h3>
+        <p class="text-gray-700 leading-relaxed mb-4" id="recommendation-description"></p>
+        <p class="text-gray-700 leading-relaxed font-light">
+          This tier is designed to give you a solid foundation for your business. It focuses on essential branding, a basic web presence, and foundational digital marketing to help you launch and find your first customers.
+        </p>
+      </div>
+      <a href="#consultation" class="bg-blue-600 text-white font-semibold py-4 px-8 rounded-full shadow-lg hover:bg-blue-700 transition-colors duration-300 mt-8 nav-link" data-page="consultation-page">
+        Get My Free Strategic Analysis
+      </a>
+    </div>
+  </div>
+
+  <!-- Blog Post 1: Website as a Lead Magnet -->
+  <div id="blog-post-1-page" class="page-content py-16 px-6 container mx-auto">
+    <button class="bg-blue-600 text-white font-semibold py-2 px-6 rounded-full hover:bg-blue-700 transition-colors mb-8 nav-link" data-page="blog-page">
+      ← Back to Blog
+    </button>
+    <div class="bg-white rounded-3xl shadow-xl p-8 md:p-16">
+      <h1 class="text-4xl font-normal text-gray-900 mb-6 text-center">Is Your Website a Lead Magnet or a Black Hole?</h1>
+      <p class="text-gray-600 mb-8 text-sm text-center">Published: October 26, 2023</p>
+      <div class="max-w-4xl mx-auto py-8">
+        <p class="text-gray-700 leading-relaxed text-justify mb-6">A website is more than just an online brochure—it’s your most valuable asset for attracting customers. But for many businesses, it's a "black hole" where visitors arrive and then vanish without a trace. A truly effective website is a lead magnet, designed to capture visitor attention and guide them toward a meaningful action. The difference lies in a few key areas: clear calls-to-action, a streamlined user experience, and content that speaks directly to your ideal customer’s pain points. Without these elements, your website might be a beautiful digital showcase, but it's not working for you.</p>
+        <p class="text-gray-700 leading-relaxed text-justify mb-6">A lead magnet website simplifies the journey from visitor to client. It anticipates questions, provides clear solutions, and makes it effortless for someone to get in touch or make a purchase. By focusing on conversion-driven design and persuasive copywriting, you can transform your online presence from a passive space into a dynamic engine for growth.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Blog Post 2: Social Media Empty Room -->
+  <div id="blog-post-2-page" class="page-content py-16 px-6 container mx-auto">
+    <button class="bg-blue-600 text-white font-semibold py-2 px-6 rounded-full hover:bg-blue-700 transition-colors mb-8 nav-link" data-page="blog-page">
+      ← Back to Blog
+    </button>
+    <div class="bg-white rounded-3xl shadow-xl p-8 md:p-16">
+      <h1 class="text-4xl font-normal text-gray-900 mb-6 text-center">You're Posting on Social Media, But Are You Talking to an Empty Room?</h1>
+      <p class="text-gray-600 mb-8 text-sm text-center">Published: October 26, 2023</p>
+      <div class="max-w-4xl mx-auto py-8">
+        <p class="text-gray-700 leading-relaxed text-justify mb-6">Many businesses
